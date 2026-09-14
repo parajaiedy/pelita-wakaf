@@ -93,6 +93,35 @@
 
     <!-- Panel Sidebar Statistik -->
     <div class="sidebar-panel">
+<style>
+        /* Perbaikan khusus layar HP untuk Kotak Ringkasan */
+        @media (max-width: 768px) {
+            .sidebar-panel {
+                top: auto !important;
+                bottom: 15px !important;
+                left: 15px !important;
+                right: 15px !important;
+                width: auto !important;
+                max-height: 40vh !important; /* Jangan lebih dari setengah layar */
+                overflow-y: auto !important;
+                padding: 15px !important;
+            }
+            .sidebar-panel hr {
+                margin: 0.5rem 0 !important;
+            }
+            .sidebar-panel h6 {
+                font-size: 0.9rem !important;
+                margin-bottom: 0.5rem !important;
+            }
+            .stat-card {
+                padding: 8px 12px !important;
+                margin-bottom: 8px !important;
+            }
+            .stat-card span.fs-5 {
+                font-size: 1.1rem !important;
+            }
+        }
+    </style>
         <div class="d-flex align-items-center gap-2 mb-3">
             <i class="fa-solid fa-mosque fa-2x text-primary"></i>
             <div>
