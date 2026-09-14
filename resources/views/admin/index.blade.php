@@ -131,17 +131,17 @@
         <!-- Header Tabel & Tombol Tambah + Export -->
         <div class="card shadow-sm border-0">
             <div class="card-body p-4">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 class="fw-bold text-dark mb-0">📋 Daftar Aset Wakaf Kota Parepare</h4>
-                    <div class="d-flex gap-2">
-                        <a href="{{ route('admin.exportExcel') }}" class="btn btn-success px-3 shadow-sm">
-                            <i class="fa-solid fa-file-excel me-1"></i> Export Excel
-                        </a>
-                        <a href="{{ route('admin.create') }}" class="btn btn-primary px-3 shadow-sm">
-                            <i class="fa-solid fa-plus me-1"></i> Tambah Aset Wakaf
-                        </a>
-                    </div>
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3">
+                <h4 class="fw-bold text-dark mb-3 mb-md-0">Daftar Aset Wakaf Kota Parepare</h4>
+                <div class="d-grid gap-2 d-md-flex">
+                    <a href="{{ route('admin.exportExcel') }}" class="btn btn-success px-3 shadow-sm">
+                        <i class="fa-solid fa-file-excel me-1"></i> Export Excel
+                    </a>
+                    <a href="{{ route('admin.create') }}" class="btn btn-primary px-3 shadow-sm">
+                        <i class="fa-solid fa-plus me-1"></i> Tambah Aset Wakaf
+                    </a>
                 </div>
+            </div>
 
                 <!-- Tabel Data -->
                 <div class="table-responsive table-custom">
