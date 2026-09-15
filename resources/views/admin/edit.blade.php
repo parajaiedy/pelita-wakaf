@@ -31,7 +31,13 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label fw-semibold">Kecamatan</label>
-                        <input type="text" name="kecamatan" class="form-control" value="{{ $aset->kecamatan }}" required>
+                        <select name="kecamatan" class="form-select" required>
+    <option value="">-- Pilih Kecamatan --</option>
+    <option value="Bacukiki">Bacukiki</option>
+    <option value="Bacukiki Barat">Bacukiki Barat</option>
+    <option value="Soreang">Soreang</option>
+    <option value="Ujung">Ujung</option>
+</select>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label fw-semibold">Kelurahan</label>
