@@ -29,20 +29,23 @@
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label class="form-label fw-semibold">Kecamatan</label>
-                        <select name="kecamatan" class="form-select" required>
-    <option value="">-- Pilih Kecamatan --</option>
-    <option value="Bacukiki">Bacukiki</option>
-    <option value="Bacukiki Barat">Bacukiki Barat</option>
-    <option value="Soreang">Soreang</option>
-    <option value="Ujung">Ujung</option>
-</select>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-semibold">Kelurahan</label>
-                        <input type="text" name="kelurahan" class="form-control" placeholder="Ujung Baru" required>
-                    </div>
-                </div>
+    <label for="kecamatan" class="form-label fw-semibold">Kecamatan</label>
+    <select name="kecamatan" id="kecamatan" class="form-select" required>
+        <option value="">-- Pilih Kecamatan --</option>
+        <option value="Bacukiki">Bacukiki</option>
+        <option value="Bacukiki Barat">Bacukiki Barat</option>
+        <option value="Soreang">Soreang</option>
+        <option value="Ujung">Ujung</option>
+    </select>
+</div>
+
+<div class="col-md-6 mb-3">
+    <label for="kelurahan" class="form-label fw-semibold">Kelurahan</label>
+    <select name="kelurahan" id="kelurahan" class="form-select" required>
+        <option value="">-- Pilih Kelurahan --</option>
+    </select>
+</div>
+
 
                 <!-- Interactive Map Picker -->
                 <div class="mb-3">
@@ -143,6 +146,30 @@
         updateInputs(lat, lng);
     });
 </script>
+<script>
+    const dataWilayah = {
+        "Bacukiki": ["Galung Maloang", "Lemoe", "Lompoe", "Watang Bacukiki"],
+        "Bacukiki Barat": ["Bumi Harapan", "Cappa Galung", "Kampung Baru", "Lumpue", "Sumpang Minangae", "Tiro Sompe"],
+        "Soreang": ["Bukit Harapan", "Bukit Indah", "Kampung Pisang", "Lakessi", "Ujung Baru", "Ujung Lare", "Watang Soreang"],
+        "Ujung": ["Labukkang", "Lapadde", "Mallusetasi", "Ujung Bulu", "Ujung Sabbang"]
+    };
 
+    const kecSelect = document.getElementById('kecamatan');
+    const kelSelect = document.getElementById('kelurahan');
+
+    kecSelect.addEventListener('change', function() {
+        const kec = this.value;
+        kelSelect.innerHTML = '<option value="">-- Pilih Kelurahan --</option>';
+        
+        if (kec && dataWilayah[kec]) {
+            dataWilayah[kec].forEach(function(kel) {
+                const option = document.createElement('option');
+                option.value = kel;
+                option.textContent = kel;
+                kelSelect.appendChild(option);
+            });
+        }
+    });
+</script>
 </body>
 </html>
