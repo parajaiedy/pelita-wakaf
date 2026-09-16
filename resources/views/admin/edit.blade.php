@@ -47,13 +47,7 @@
     </select>
 </div>
 
-<div class="col-md-6 mb-3">
-    <label for="kelurahan" class="form-label fw-semibold">Kelurahan</label>
-    <!-- Atribut data-selected akan menyimpan kelurahan lama dari database -->
-    <select name="kelurahan" id="kelurahan" class="form-select" data-selected="{{ $aset->kelurahan }}" required>
-        <option value="">-- Pilih Kelurahan --</option>
-    </select>
-</div>
+
 
                 <!-- Interactive Map Picker -->
                 <div class="mb-3">
