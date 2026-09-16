@@ -49,7 +49,26 @@
         attribution: '&copy; OpenStreetMap'
     }).addTo(map);
 
-    // 2. Ambil data dari database yang dikirim lewat rute Laravel
+    // --- Membuat Custom Icon Warna ---
+    var greenIcon = new L.Icon({
+        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+    });
+
+    var redIcon = new L.Icon({
+        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+    });
+
+    // 2. Ambil data dari database
     var asetData = [
         @foreach($asets as $aset)
         {
@@ -66,11 +85,15 @@
 
     // 3. Loop untuk menyebar titik/pin (marker) di peta secara otomatis
     asetData.forEach(function(data) {
-        // Pastikan titik latitude longitude-nya valid
         if(data.lat !== 0 && data.lng !== 0) {
-            var marker = L.marker([data.lat, data.lng]).addTo(map);
             
-            // Bedakan icon ceklis (sudah) dan silang (belum sertipikat)
+            // Logika Warna: Jika sudah sertipikat = Hijau, selain itu = Merah
+            var selectedIcon = (data.status === 'Sudah Bersertipikat') ? greenIcon : redIcon;
+            
+            // Pasang marker dengan warna yang sesuai
+            var marker = L.marker([data.lat, data.lng], {icon: selectedIcon}).addTo(map);
+            
+            // Ikon teks di dalam popup
             var iconStatus = data.status == 'Sudah Bersertipikat' 
                              ? '<i class="fa-solid fa-check-circle text-success"></i>' 
                              : '<i class="fa-solid fa-circle-exclamation text-danger"></i>';
