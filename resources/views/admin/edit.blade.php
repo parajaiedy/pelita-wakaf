@@ -29,17 +29,7 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-semibold">Kecamatan</label>
-                        <select name="kecamatan" class="form-select" required>
-    <option value="">-- Pilih Kecamatan --</option>
-    <option value="Bacukiki">Bacukiki</option>
-    <option value="Bacukiki Barat">Bacukiki Barat</option>
-    <option value="Soreang">Soreang</option>
-    <option value="Ujung">Ujung</option>
-</select>
-                    </div>
-                    <div class="col-md-6 mb-3">
+                   <div class="col-md-6 mb-3">
     <label for="kecamatan" class="form-label fw-semibold">Kecamatan</label>
     <select name="kecamatan" id="kecamatan" class="form-select" required>
         <option value="">-- Pilih Kecamatan --</option>
@@ -47,6 +37,13 @@
         <option value="Bacukiki Barat" {{ $aset->kecamatan == 'Bacukiki Barat' ? 'selected' : '' }}>Bacukiki Barat</option>
         <option value="Soreang" {{ $aset->kecamatan == 'Soreang' ? 'selected' : '' }}>Soreang</option>
         <option value="Ujung" {{ $aset->kecamatan == 'Ujung' ? 'selected' : '' }}>Ujung</option>
+    </select>
+</div>
+
+<div class="col-md-6 mb-3">
+    <label for="kelurahan" class="form-label fw-semibold">Kelurahan</label>
+    <select name="kelurahan" id="kelurahan" class="form-select" data-selected="{{ $aset->kelurahan }}" required>
+        <option value="">-- Pilih Kelurahan --</option>
     </select>
 </div>
 
