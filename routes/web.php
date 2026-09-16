@@ -3,14 +3,15 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\WakafController;
 use App\Http\Controllers\AuthController;
+use App\Models\AsetWakaf; // Menambahkan panggian Model agar aman
 
 // Route Peta Utama (Bawaan)
 Route::get('/', [WakafController::class, 'index'])->name('home');
 
 // Route Peta Publik Full Screen (Baru)
 Route::get('/peta', function () {
-    // Memanggil tabel aset_wakafs secara langsung. 
-    $asets = \Illuminate\Support\Facades\DB::table('aset_wakafs')->get(); 
+    // Memanggil data langsung dari Model, dijamin tidak akan salah nama tabel
+    $asets = AsetWakaf::all(); 
     return view('peta_publik', compact('asets'));
 });
 
