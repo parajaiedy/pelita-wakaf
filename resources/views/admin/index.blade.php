@@ -16,22 +16,26 @@
         .table-custom { border-radius: 10px; overflow: hidden; }
         .table-custom thead { background-color: #0f172a; color: white; }
         .chart-card { border: none; border-radius: 12px; }
+        /* Tambahan agar badge tidak pecah di HP */
+        .badge { white-space: normal; text-align: center; }
+        /* Memperlebar kolom agar tidak terlalu berdempetan saat digeser */
+        table th, table td { white-space: nowrap; }
     </style>
 </head>
 <body>
 
     <!-- Navbar Header -->
     <nav class="navbar navbar-expand-lg navbar-custom px-4 py-3 shadow-sm mb-4">
-        <div class="container-fluid">
+        <div class="container-fluid flex-wrap gap-2">
             <a class="navbar-brand text-white fw-bold d-flex align-items-center gap-2" href="#">
                 <i class="fa-solid fa-mosque me-1"></i> <span>Pelita Wakaf Parepare</span>
             </a>
-            <div class="d-flex align-items-center gap-3">
+            <div class="d-flex align-items-center gap-2 flex-wrap">
                 <span class="badge bg-secondary px-3 py-2 rounded-pill">
                     <i class="fa-solid fa-user me-1"></i> {{ Auth::user()->name }}
                 </span>
                 <a href="{{ route('home') }}" class="btn btn-outline-light btn-sm px-3">
-                    <i class="fa-solid fa-map me-1"></i> Lihat Peta
+                    <i class="fa-solid fa-map me-1"></i> Peta Publik
                 </a>
                 <form action="{{ route('logout') }}" method="POST" class="d-inline">
                     @csrf
@@ -55,47 +59,47 @@
 
         <!-- Ringkasan Kartu Statistik -->
         <div class="row g-3 mb-4">
-            <div class="col-md-3">
-                <div class="card card-stat bg-primary text-white shadow-sm">
+            <div class="col-6 col-md-3">
+                <div class="card card-stat bg-primary text-white shadow-sm h-100">
                     <div class="card-body p-3 d-flex justify-content-between align-items-center">
                         <div>
                             <h6 class="text-white-50 small mb-1">Total Aset Wakaf</h6>
                             <h3 class="fw-bold mb-0">{{ $asetWakaf->count() }}</h3>
                         </div>
-                        <i class="fa-solid fa-mosque fa-2x opacity-50"></i>
+                        <i class="fa-solid fa-mosque fa-2x opacity-50 d-none d-sm-block"></i>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card card-stat bg-success text-white shadow-sm">
+            <div class="col-6 col-md-3">
+                <div class="card card-stat bg-success text-white shadow-sm h-100">
                     <div class="card-body p-3 d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="text-white-50 small mb-1">Sudah Bersertipikat</h6>
+                            <h6 class="text-white-50 small mb-1">Sudah Sertipikat</h6>
                             <h3 class="fw-bold mb-0">{{ $asetWakaf->where('status_sertipikat', 'Sudah Bersertipikat')->count() }}</h3>
                         </div>
-                        <i class="fa-solid fa-certificate fa-2x opacity-50"></i>
+                        <i class="fa-solid fa-certificate fa-2x opacity-50 d-none d-sm-block"></i>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card card-stat bg-danger text-white shadow-sm">
+            <div class="col-6 col-md-3">
+                <div class="card card-stat bg-danger text-white shadow-sm h-100">
                     <div class="card-body p-3 d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="text-white-50 small mb-1">Belum Bersertipikat</h6>
+                            <h6 class="text-white-50 small mb-1">Belum Sertipikat</h6>
                             <h3 class="fw-bold mb-0">{{ $asetWakaf->where('status_sertipikat', 'Belum Bersertipikat')->count() }}</h3>
                         </div>
-                        <i class="fa-solid fa-file-circle-exclamation fa-2x opacity-50"></i>
+                        <i class="fa-solid fa-file-circle-exclamation fa-2x opacity-50 d-none d-sm-block"></i>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card card-stat bg-warning text-dark shadow-sm">
+            <div class="col-6 col-md-3">
+                <div class="card card-stat bg-warning text-dark shadow-sm h-100">
                     <div class="card-body p-3 d-flex justify-content-between align-items-center">
                         <div>
                             <h6 class="text-dark-50 small mb-1">Total Luas (m²)</h6>
                             <h3 class="fw-bold mb-0">{{ number_format($asetWakaf->sum('luas_tanah')) }}</h3>
                         </div>
-                        <i class="fa-solid fa-ruler-combined fa-2x opacity-50"></i>
+                        <i class="fa-solid fa-ruler-combined fa-2x opacity-50 d-none d-sm-block"></i>
                     </div>
                 </div>
             </div>
@@ -104,7 +108,7 @@
         <!-- Section Diagram Visualisasi Statistik -->
         <div class="row g-3 mb-4">
             <!-- Diagram Lingkaran Status Sertipikat -->
-            <div class="col-md-5">
+            <div class="col-12 col-lg-5">
                 <div class="card chart-card shadow-sm h-100">
                     <div class="card-body p-4">
                         <h5 class="fw-bold text-dark mb-3"><i class="fa-solid fa-chart-pie me-2 text-primary"></i>Status Sertipikasi</h5>
@@ -116,7 +120,7 @@
             </div>
 
             <!-- Diagram Batang Per Kecamatan -->
-            <div class="col-md-7">
+            <div class="col-12 col-lg-7">
                 <div class="card chart-card shadow-sm h-100">
                     <div class="card-body p-4">
                         <h5 class="fw-bold text-dark mb-3"><i class="fa-solid fa-chart-column me-2 text-success"></i>Sebaran Aset per Kecamatan</h5>
@@ -130,26 +134,26 @@
 
         <!-- Header Tabel & Tombol Tambah + Export -->
         <div class="card shadow-sm border-0">
-            <div class="card-body p-4">
-                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3">
-                <h4 class="fw-bold text-dark mb-3 mb-md-0">Daftar Aset Wakaf Kota Parepare</h4>
-                <div class="d-grid gap-2 d-md-flex">
-                    <a href="{{ route('admin.exportExcel') }}" class="btn btn-success px-3 shadow-sm">
-                        <i class="fa-solid fa-file-excel me-1"></i> Export Excel
-                    </a>
-                    <a href="{{ route('admin.create') }}" class="btn btn-primary px-3 shadow-sm">
-                        <i class="fa-solid fa-plus me-1"></i> Tambah Aset Wakaf
-                    </a>
+            <div class="card-body p-3 p-md-4">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 gap-3">
+                    <h4 class="fw-bold text-dark mb-0">Daftar Aset Wakaf Parepare</h4>
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="{{ route('admin.exportExcel') }}" class="btn btn-success shadow-sm flex-fill">
+                            <i class="fa-solid fa-file-excel me-1"></i> Export
+                        </a>
+                        <a href="{{ route('admin.create') }}" class="btn btn-primary shadow-sm flex-fill">
+                            <i class="fa-solid fa-plus me-1"></i> Tambah Aset
+                        </a>
+                    </div>
                 </div>
-            </div>
 
-                <!-- Tabel Data -->
-                <div class="table-responsive table-custom">
-                    <table class="table table-hover table-striped align-middle mb-0">
+                <!-- Bagian Kunci: Tabel Responsif -->
+                <div class="table-responsive table-custom shadow-sm border">
+                    <table class="table table-hover table-striped align-middle mb-0 text-nowrap">
                         <thead>
                             <tr class="text-center">
                                 <th width="4%">No</th>
-                                <th class="text-start">Nama Tanah Wakaf / Masjid</th>
+                                <th class="text-start">Nama Masjid / Tanah</th>
                                 <th class="text-start">Wilayah</th>
                                 <th>Koordinat</th>
                                 <th>Status Sertipikat</th>
@@ -209,15 +213,18 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="8" class="text-center py-4 text-muted">
-                                        <i class="fa-solid fa-folder-open fa-2x mb-2 d-block opacity-50"></i>
-                                        Belum ada data aset wakaf yang terdaftar.
+                                    <td colspan="8" class="text-center py-5 text-muted">
+                                        <i class="fa-solid fa-folder-open fa-3x mb-3 d-block opacity-50"></i>
+                                        <h5 class="fw-semibold">Data Kosong</h5>
+                                        <p class="mb-0">Belum ada data aset wakaf yang terdaftar.</p>
                                     </td>
                                 </tr>
                             @endforelse
                         </tbody>
                     </table>
                 </div>
+                <!-- Akhir Tabel Responsif -->
+                
             </div>
         </div>
 
