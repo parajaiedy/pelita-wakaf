@@ -24,3 +24,9 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     // Route Export Excel
     Route::get('/export-excel', [WakafController::class, 'exportExcel'])->name('exportExcel');
 });
+Route::get('/peta', function () {
+    // AMAN DAN PASTI JALAN: Mengambil tabel database secara langsung
+    $asets = Illuminate\Support\Facades\DB::table('asets')->get(); 
+    
+    return view('peta_publik', compact('asets'));
+});
