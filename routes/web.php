@@ -4,8 +4,15 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\WakafController;
 use App\Http\Controllers\AuthController;
 
-// Route Peta Utama (Publik)
+// Route Peta Utama (Bawaan)
 Route::get('/', [WakafController::class, 'index'])->name('home');
+
+// Route Peta Publik Full Screen (Baru)
+Route::get('/peta', function () {
+    // Memanggil tabel aset_wakafs secara langsung. 
+    $asets = \Illuminate\Support\Facades\DB::table('aset_wakafs')->get(); 
+    return view('peta_publik', compact('asets'));
+});
 
 // Route Auth (Login & Logout)
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -23,10 +30,4 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     
     // Route Export Excel
     Route::get('/export-excel', [WakafController::class, 'exportExcel'])->name('exportExcel');
-});
-Route::get('/peta', function () {
-    // AMAN DAN PASTI JALAN: Mengambil tabel database secara langsung
-    $asets = Illuminate\Support\Facades\DB::table('asets')->get(); 
-    
-    return view('peta_publik', compact('asets'));
 });
