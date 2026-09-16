@@ -158,30 +158,38 @@
         inputLat.addEventListener('input', pindahPinSesuaiKetik);
         inputLng.addEventListener('input', pindahPinSesuaiKetik);
     }
+</script>
 
-    // --- Fitur Kelurahan Otomatis ---
-    const dataWilayah = {
-        "Bacukiki": ["Galung Maloang", "Lemoe", "Lompoe", "Watang Bacukiki"],
-        "Bacukiki Barat": ["Bumi Harapan", "Cappa Galung", "Kampung Baru", "Lumpue", "Sumpang Minangae", "Tiro Sompe"],
-        "Soreang": ["Bukit Harapan", "Bukit Indah", "Kampung Pisang", "Lakessi", "Ujung Baru", "Ujung Lare", "Watang Soreang"],
-        "Ujung": ["Labukkang", "Lapadde", "Mallusetasi", "Ujung Bulu", "Ujung Sabbang"]
-    };
+<!-- Script Kelurahan Otomatis (Anti-Macet) -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        setTimeout(function() {
+            const dataWilayah = {
+                "Bacukiki": ["Galung Maloang", "Lemoe", "Lompoe", "Watang Bacukiki"],
+                "Bacukiki Barat": ["Bumi Harapan", "Cappa Galung", "Kampung Baru", "Lumpue", "Sumpang Minangae", "Tiro Sompe"],
+                "Soreang": ["Bukit Harapan", "Bukit Indah", "Kampung Pisang", "Lakessi", "Ujung Baru", "Ujung Lare", "Watang Soreang"],
+                "Ujung": ["Labukkang", "Lapadde", "Mallusetasi", "Ujung Bulu", "Ujung Sabbang"]
+            };
 
-    const kecSelect = document.getElementById('kecamatan');
-    const kelSelect = document.getElementById('kelurahan');
+            const kecSelect = document.getElementById('kecamatan');
+            const kelSelect = document.getElementById('kelurahan');
 
-    kecSelect.addEventListener('change', function() {
-        const kec = this.value;
-        kelSelect.innerHTML = '<option value="">-- Pilih Kelurahan --</option>';
-        
-        if (kec && dataWilayah[kec]) {
-            dataWilayah[kec].forEach(function(kel) {
-                const option = document.createElement('option');
-                option.value = kel;
-                option.textContent = kel;
-                kelSelect.appendChild(option);
-            });
-        }
+            if(kecSelect && kelSelect) {
+                kecSelect.addEventListener('change', function() {
+                    const kec = this.value;
+                    kelSelect.innerHTML = '<option value="">-- Pilih Kelurahan --</option>';
+                    
+                    if (kec && dataWilayah[kec]) {
+                        dataWilayah[kec].forEach(function(kel) {
+                            const option = document.createElement('option');
+                            option.value = kel;
+                            option.textContent = kel;
+                            kelSelect.appendChild(option);
+                        });
+                    }
+                });
+            }
+        }, 500); // Jeda aman
     });
 </script>
 </body>

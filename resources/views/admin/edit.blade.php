@@ -110,8 +110,9 @@
 
 <!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<!-- Script Peta -->
 <script>
-    // Ambil koordinat awal dari data database
     var currentLat = parseFloat("{{ $aset->latitude }}");
     var currentLng = parseFloat("{{ $aset->longitude }}");
 
@@ -140,7 +141,6 @@
         updateInputs(lat, lng);
     });
 
-    // --- Fitur geser pin otomatis saat kolom diketik manual ---
     const inputLat = document.querySelector('input[name="latitude"]');
     const inputLng = document.querySelector('input[name="longitude"]');
 
@@ -148,62 +148,64 @@
         let latTeks = parseFloat(inputLat.value);
         let lngTeks = parseFloat(inputLng.value);
         
-        // Jika angkanya valid, geser pin dan pusatkan peta ke titik tersebut
         if (!isNaN(latTeks) && !isNaN(lngTeks)) {
             marker.setLatLng([latTeks, lngTeks]);
             pickerMap.setView([latTeks, lngTeks]); 
         }
     }
 
-    // Pasang pendeteksi agar pin bergeser setiap kali Bapak mengetik
     if(inputLat && inputLng) {
         inputLat.addEventListener('input', pindahPinSesuaiKetik);
         inputLng.addEventListener('input', pindahPinSesuaiKetik);
     }
+</script>
 
-    // --- Fitur Kelurahan Otomatis untuk Halaman Edit ---
+<!-- Script Kelurahan Otomatis (Anti-Macet) -->
+<script>
     document.addEventListener("DOMContentLoaded", function() {
-        const dataWilayah = {
-            "Bacukiki": ["Galung Maloang", "Lemoe", "Lompoe", "Watang Bacukiki"],
-            "Bacukiki Barat": ["Bumi Harapan", "Cappa Galung", "Kampung Baru", "Lumpue", "Sumpang Minangae", "Tiro Sompe"],
-            "Soreang": ["Bukit Harapan", "Bukit Indah", "Kampung Pisang", "Lakessi", "Ujung Baru", "Ujung Lare", "Watang Soreang"],
-            "Ujung": ["Labukkang", "Lapadde", "Mallusetasi", "Ujung Bulu", "Ujung Sabbang"]
-        };
+        setTimeout(function() {
+            const dataWilayah = {
+                "Bacukiki": ["Galung Maloang", "Lemoe", "Lompoe", "Watang Bacukiki"],
+                "Bacukiki Barat": ["Bumi Harapan", "Cappa Galung", "Kampung Baru", "Lumpue", "Sumpang Minangae", "Tiro Sompe"],
+                "Soreang": ["Bukit Harapan", "Bukit Indah", "Kampung Pisang", "Lakessi", "Ujung Baru", "Ujung Lare", "Watang Soreang"],
+                "Ujung": ["Labukkang", "Lapadde", "Mallusetasi", "Ujung Bulu", "Ujung Sabbang"]
+            };
 
-        const kecSelect = document.getElementById('kecamatan');
-        const kelSelect = document.getElementById('kelurahan');
-        
-        // Ambil data kelurahan lama yang tersimpan
-        const selectedKelurahan = kelSelect.getAttribute('data-selected');
-
-        function updateKelurahan() {
-            const kec = kecSelect.value;
-            kelSelect.innerHTML = '<option value="">-- Pilih Kelurahan --</option>';
+            const kecSelect = document.getElementById('kecamatan');
+            const kelSelect = document.getElementById('kelurahan');
             
-            if (kec && dataWilayah[kec]) {
-                dataWilayah[kec].forEach(function(kel) {
-                    const option = document.createElement('option');
-                    option.value = kel;
-                    option.textContent = kel;
-                    
-                    // Otomatis pilih kelurahan jika sama dengan data di database
-                    if (kel === selectedKelurahan) {
-                        option.selected = true;
-                    }
-                    
-                    kelSelect.appendChild(option);
-                });
-            }
-        }
+            // Ambil data kelurahan lama yang tersimpan
+            const selectedKelurahan = kelSelect.getAttribute('data-selected');
 
-        if(kecSelect && kelSelect) {
-            kecSelect.addEventListener('change', updateKelurahan);
-            
-            // Langsung jalankan saat halaman pertama dibuka supaya kelurahan lama muncul
-            if (kecSelect.value) {
-                updateKelurahan();
+            function updateKelurahan() {
+                const kec = kecSelect.value;
+                kelSelect.innerHTML = '<option value="">-- Pilih Kelurahan --</option>';
+                
+                if (kec && dataWilayah[kec]) {
+                    dataWilayah[kec].forEach(function(kel) {
+                        const option = document.createElement('option');
+                        option.value = kel;
+                        option.textContent = kel;
+                        
+                        // Otomatis pilih kelurahan jika sama dengan data di database
+                        if (kel === selectedKelurahan) {
+                            option.selected = true;
+                        }
+                        
+                        kelSelect.appendChild(option);
+                    });
+                }
             }
-        }
+
+            if(kecSelect && kelSelect) {
+                kecSelect.addEventListener('change', updateKelurahan);
+                
+                // Langsung jalankan saat halaman pertama dibuka supaya kelurahan lama muncul
+                if (kecSelect.value) {
+                    updateKelurahan();
+                }
+            }
+        }, 500); // Jeda aman
     });
 </script>
 </body>
