@@ -141,6 +141,26 @@
         updateInputs(lat, lng);
     });
 </script>
+// --- Fitur geser pin otomatis saat kolom diketik manual ---
+        const inputLat = document.querySelector('input[name="latitude"]');
+        const inputLng = document.querySelector('input[name="longitude"]');
+
+        function pindahPinSesuaiKetik() {
+            let latTeks = parseFloat(inputLat.value);
+            let lngTeks = parseFloat(inputLng.value);
+            
+            // Jika angkanya valid, geser pin dan pusatkan peta ke titik tersebut
+            if (!isNaN(latTeks) && !isNaN(lngTeks)) {
+                marker.setLatLng([latTeks, lngTeks]);
+                pickerMap.setView([latTeks, lngTeks]); 
+            }
+        }
+
+        // Pasang pendeteksi agar pin bergeser setiap kali Bapak mengetik
+        if(inputLat && inputLng) {
+            inputLat.addEventListener('input', pindahPinSesuaiKetik);
+            inputLng.addEventListener('input', pindahPinSesuaiKetik);
+        }
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const dataWilayah = {
