@@ -9,19 +9,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
-        /* CSS agar peta tampil satu layar penuh (Full Screen) */
         body, html { height: 100%; margin: 0; overflow: hidden; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         .navbar { background: linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%); padding: 10px 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 1000; }
         #map { height: calc(100vh - 60px); width: 100%; z-index: 1; }
-        
-        /* CSS untuk mempercantik kartu info (Pop-up) saat pin peta diklik */
         .popup-custom h6 { font-weight: 700; color: #0d6efd; margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
         .popup-custom p { margin: 4px 0; font-size: 13.5px; }
     </style>
 </head>
 <body>
 
-<!-- Bagian Header Atas -->
 <nav class="navbar navbar-dark d-flex justify-content-between align-items-center">
     <div class="text-white d-flex align-items-center">
         <i class="fa-solid fa-map-location-dot fs-3 me-2"></i>
@@ -30,26 +26,22 @@
             <small class="opacity-75 d-none d-sm-block" style="font-size: 12px;">Peta Persebaran Aset Wakaf Kota Parepare</small>
         </div>
     </div>
-    <!-- Tombol menuju halaman Login Admin -->
     <a href="{{ route('login') }}" class="btn btn-light btn-sm fw-semibold text-primary rounded-pill px-3 shadow-sm">
         <i class="fa-solid fa-right-to-bracket me-1"></i> Login Admin
     </a>
 </nav>
 
-<!-- Area Peta Leaflet -->
 <div id="map"></div>
 
-<!-- Leaflet JS & Script -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-    // 1. Inisialisasi peta di tengah Parepare
     var map = L.map('map').setView([-4.00165, 119.64347], 13);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap'
     }).addTo(map);
 
-    // --- Membuat Custom Icon Warna ---
+    // Ikon Hijau
     var greenIcon = new L.Icon({
         iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
         shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
@@ -59,6 +51,7 @@
         shadowSize: [41, 41]
     });
 
+    // Ikon Merah
     var redIcon = new L.Icon({
         iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
         shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
@@ -68,37 +61,33 @@
         shadowSize: [41, 41]
     });
 
-    // 2. Ambil data dari database
     var asetData = [
         @foreach($asets as $aset)
         {
-            nama: "{{ $aset->nama_masjid }}",
+            nama: "{!! $aset->nama_masjid !!}",
             lat: {{ $aset->latitude ?? 0 }},
             lng: {{ $aset->longitude ?? 0 }},
-            kecamatan: "{{ $aset->kecamatan }}",
-            kelurahan: "{{ $aset->kelurahan }}",
-            status: "{{ $aset->status_sertipikat }}",
+            kecamatan: "{!! $aset->kecamatan !!}",
+            kelurahan: "{!! $aset->kelurahan !!}",
+            status: "{!! $aset->status_sertipikat !!}",
             luas: "{{ $aset->luas_tanah }}"
         },
         @endforeach
     ];
 
-    // 3. Loop untuk menyebar titik/pin (marker) di peta secara otomatis
     asetData.forEach(function(data) {
         if(data.lat !== 0 && data.lng !== 0) {
             
-            // Logika Warna: Jika sudah sertipikat = Hijau, selain itu = Merah
-            var selectedIcon = (data.status === 'Sudah Bersertipikat') ? greenIcon : redIcon;
+            // JURUS ANTI GAGAL: Cek apakah ada kata "Sudah" di dalamnya
+            var isSudah = data.status.includes('Sudah');
+            var selectedIcon = isSudah ? greenIcon : redIcon;
             
-            // Pasang marker dengan warna yang sesuai
             var marker = L.marker([data.lat, data.lng], {icon: selectedIcon}).addTo(map);
             
-            // Ikon teks di dalam popup
-            var iconStatus = data.status == 'Sudah Bersertipikat' 
+            var iconStatus = isSudah 
                              ? '<i class="fa-solid fa-check-circle text-success"></i>' 
                              : '<i class="fa-solid fa-circle-exclamation text-danger"></i>';
             
-            // Isi kartu info saat diklik
             var popupContent = `
                 <div class="popup-custom">
                     <h6><i class="fa-solid fa-mosque me-1"></i> ${data.nama}</h6>
