@@ -29,23 +29,23 @@
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
-    <label for="kecamatan" class="form-label fw-semibold">Kecamatan</label>
-    <select name="kecamatan" id="kecamatan" class="form-select" required>
-        <option value="">-- Pilih Kecamatan --</option>
-        <option value="Bacukiki">Bacukiki</option>
-        <option value="Bacukiki Barat">Bacukiki Barat</option>
-        <option value="Soreang">Soreang</option>
-        <option value="Ujung">Ujung</option>
-    </select>
-</div>
+                        <label for="kecamatan" class="form-label fw-semibold">Kecamatan</label>
+                        <select name="kecamatan" id="kecamatan" class="form-select" required>
+                            <option value="">-- Pilih Kecamatan --</option>
+                            <option value="Bacukiki">Bacukiki</option>
+                            <option value="Bacukiki Barat">Bacukiki Barat</option>
+                            <option value="Soreang">Soreang</option>
+                            <option value="Ujung">Ujung</option>
+                        </select>
+                    </div>
 
-<div class="col-md-6 mb-3">
-    <label for="kelurahan" class="form-label fw-semibold">Kelurahan</label>
-    <select name="kelurahan" id="kelurahan" class="form-select" required>
-        <option value="">-- Pilih Kelurahan --</option>
-    </select>
-</div>
-
+                    <div class="col-md-6 mb-3">
+                        <label for="kelurahan" class="form-label fw-semibold">Kelurahan</label>
+                        <select name="kelurahan" id="kelurahan" class="form-select" required>
+                            <option value="">-- Pilih Kelurahan --</option>
+                        </select>
+                    </div>
+                </div>
 
                 <!-- Interactive Map Picker -->
                 <div class="mb-3">
@@ -110,7 +110,7 @@
 <!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-    // Inisialisasi Peta Picker (Default: Pusat Parepare)
+    // --- Inisialisasi Peta Picker ---
     var defaultLat = -4.00165;
     var defaultLng = 119.64347;
 
@@ -120,33 +120,26 @@
         attribution: '&copy; OpenStreetMap'
     }).addTo(pickerMap);
 
-    // Marker yang bisa digeser (Draggable)
     var marker = L.marker([defaultLat, defaultLng], { draggable: true }).addTo(pickerMap);
 
-    // Function update nilai input form
     function updateInputs(lat, lng) {
         document.getElementById('latitude').value = lat.toFixed(7);
         document.getElementById('longitude').value = lng.toFixed(7);
     }
-
-    // Set nilai awal
     updateInputs(defaultLat, defaultLng);
 
-    // Event saat marker digeser
     marker.on('dragend', function (e) {
         var position = marker.getLatLng();
         updateInputs(position.lat, position.lng);
     });
 
-    // Event saat peta diklik
     pickerMap.on('click', function (e) {
         var lat = e.latlng.lat;
         var lng = e.latlng.lng;
         marker.setLatLng([lat, lng]);
         updateInputs(lat, lng);
     });
-</script>
-<script>
+
     // --- Fitur geser pin otomatis saat kolom diketik manual ---
     const inputLat = document.querySelector('input[name="latitude"]');
     const inputLng = document.querySelector('input[name="longitude"]');
@@ -155,19 +148,18 @@
         let latTeks = parseFloat(inputLat.value);
         let lngTeks = parseFloat(inputLng.value);
         
-        // Jika angkanya valid, geser pin dan pusatkan peta ke titik tersebut
         if (!isNaN(latTeks) && !isNaN(lngTeks)) {
             marker.setLatLng([latTeks, lngTeks]);
             pickerMap.setView([latTeks, lngTeks]); 
         }
     }
 
-    // Pasang pendeteksi agar pin bergeser setiap kali Bapak mengetik
     if(inputLat && inputLng) {
         inputLat.addEventListener('input', pindahPinSesuaiKetik);
         inputLng.addEventListener('input', pindahPinSesuaiKetik);
     }
-</script>
+
+    // --- Fitur Kelurahan Otomatis ---
     const dataWilayah = {
         "Bacukiki": ["Galung Maloang", "Lemoe", "Lompoe", "Watang Bacukiki"],
         "Bacukiki Barat": ["Bumi Harapan", "Cappa Galung", "Kampung Baru", "Lumpue", "Sumpang Minangae", "Tiro Sompe"],
