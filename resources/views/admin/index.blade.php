@@ -13,13 +13,14 @@
         .navbar-custom { background-color: #1e293b; color: white; }
         .card-stat { border: none; border-radius: 12px; transition: transform 0.2s; }
         .card-stat:hover { transform: translateY(-3px); }
-        .table-custom { border-radius: 10px; overflow: hidden; }
-        .table-custom thead { background-color: #0f172a; color: white; }
         .chart-card { border: none; border-radius: 12px; }
-        /* Tambahan agar badge tidak pecah di HP */
+        
+        /* Tambahan agar tabel tidak kaku */
+        .table thead th { background-color: #0f172a; color: white; border-bottom: none; }
         .badge { white-space: normal; text-align: center; }
-        /* Memperlebar kolom agar tidak terlalu berdempetan saat digeser */
-        table th, table td { white-space: nowrap; }
+        
+        /* Memaksa kolom tabel agar tidak berdempetan dan membungkus kata dengan rapi */
+        table th, table td { white-space: nowrap; vertical-align: middle; }
     </style>
 </head>
 <body>
@@ -34,7 +35,7 @@
                 <span class="badge bg-secondary px-3 py-2 rounded-pill">
                     <i class="fa-solid fa-user me-1"></i> {{ Auth::user()->name }}
                 </span>
-                <a href="{{ route('home') }}" class="btn btn-outline-light btn-sm px-3">
+                <a href="{{ route('peta.publik') }}" class="btn btn-outline-light btn-sm px-3" target="_blank">
                     <i class="fa-solid fa-map me-1"></i> Peta Publik
                 </a>
                 <form action="{{ route('logout') }}" method="POST" class="d-inline">
@@ -107,7 +108,6 @@
 
         <!-- Section Diagram Visualisasi Statistik -->
         <div class="row g-3 mb-4">
-            <!-- Diagram Lingkaran Status Sertipikat -->
             <div class="col-12 col-lg-5">
                 <div class="card chart-card shadow-sm h-100">
                     <div class="card-body p-4">
@@ -119,7 +119,6 @@
                 </div>
             </div>
 
-            <!-- Diagram Batang Per Kecamatan -->
             <div class="col-12 col-lg-7">
                 <div class="card chart-card shadow-sm h-100">
                     <div class="card-body p-4">
@@ -135,7 +134,7 @@
         <!-- Header Tabel & Tombol Tambah + Export -->
         <div class="card shadow-sm border-0">
             <div class="card-body p-3 p-md-4">
-                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 gap-3">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
                     <h4 class="fw-bold text-dark mb-0">Daftar Aset Wakaf Parepare</h4>
                     <div class="d-flex flex-wrap gap-2">
                         <a href="{{ route('admin.exportExcel') }}" class="btn btn-success shadow-sm flex-fill">
@@ -147,81 +146,83 @@
                     </div>
                 </div>
 
-                <!-- Bagian Kunci: Tabel Responsif -->
-                <div class="table-responsive table-custom shadow-sm border">
-                    <table class="table table-hover table-striped align-middle mb-0 text-nowrap">
-                        <thead>
-                            <tr class="text-center">
-                                <th width="4%">No</th>
-                                <th class="text-start">Nama Masjid / Tanah</th>
-                                <th class="text-start">Wilayah</th>
-                                <th>Koordinat</th>
-                                <th>Status Sertipikat</th>
-                                <th>Jenis & No. Hak</th>
-                                <th>Luas (m²)</th>
-                                <th width="10%">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($asetWakaf as $index => $item)
-                                <tr>
-                                    <td class="text-center fw-bold">{{ $index + 1 }}</td>
-                                    <td class="text-start">
-                                        <div class="fw-bold text-dark">{{ $item->nama_masjid }}</div>
-                                    </td>
-                                    <td class="text-start">
-                                        <small class="text-muted"><i class="fa-solid fa-location-dot me-1"></i> Kec. {{ $item->kecamatan }} / Kel. {{ $item->kelurahan }}</small>
-                                    </td>
-                                    <td class="text-center">
-                                        <span class="badge bg-light text-dark border"><i class="fa-regular fa-compass me-1"></i> {{ $item->latitude }}, {{ $item->longitude }}</span>
-                                    </td>
-                                    <td class="text-center">
-                                        @if($item->status_sertipikat == 'Sudah Bersertipikat')
-                                            <span class="badge bg-success-subtle text-success border border-success px-3 py-1 rounded-pill">
-                                                <i class="fa-solid fa-check-circle me-1"></i> Sudah Bersertipikat
-                                            </span>
-                                        @else
-                                            <span class="badge bg-danger-subtle text-danger border border-danger px-3 py-1 rounded-pill">
-                                                <i class="fa-solid fa-xmark-circle me-1"></i> Belum Bersertipikat
-                                            </span>
-                                        @endif
-                                    </td>
-                                    <td class="text-center">
-                                        @if($item->jenis_hak || $item->nomor_hak)
-                                            <span class="badge bg-info-subtle text-info-emphasis border px-2 py-1">
-                                                {{ $item->jenis_hak ?? '-' }} No. {{ $item->nomor_hak ?? '-' }}
-                                            </span>
-                                        @else
-                                            <span class="text-muted small">-</span>
-                                        @endif
-                                    </td>
-                                    <td class="text-center fw-semibold">{{ number_format($item->luas_tanah) }}</td>
-                                    <td class="text-center">
-                                        <div class="d-flex justify-content-center gap-1">
-                                            <a href="{{ route('admin.edit', $item->id) }}" class="btn btn-warning btn-sm" title="Edit">
-                                                <i class="fa-solid fa-pen-to-square"></i>
-                                            </a>
-                                            <form action="{{ route('admin.destroy', $item->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button class="btn btn-danger btn-sm" title="Hapus">
-                                                    <i class="fa-solid fa-trash"></i>
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </td>
+                <!-- KUNCI PERBAIKAN: Dibungkus dengan border biasa, lalu table-responsive di dalamnya murni -->
+                <div class="border rounded">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped align-middle mb-0">
+                            <thead>
+                                <tr class="text-center text-nowrap">
+                                    <th width="4%">No</th>
+                                    <th class="text-start">Nama Masjid / Tanah</th>
+                                    <th class="text-start">Wilayah</th>
+                                    <th>Koordinat</th>
+                                    <th>Status Sertipikat</th>
+                                    <th>Jenis & No. Hak</th>
+                                    <th>Luas (m²)</th>
+                                    <th width="10%">Aksi</th>
                                 </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="8" class="text-center py-5 text-muted">
-                                        <i class="fa-solid fa-folder-open fa-3x mb-3 d-block opacity-50"></i>
-                                        <h5 class="fw-semibold">Data Kosong</h5>
-                                        <p class="mb-0">Belum ada data aset wakaf yang terdaftar.</p>
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                @forelse($asetWakaf as $index => $item)
+                                    <tr>
+                                        <td class="text-center fw-bold">{{ $index + 1 }}</td>
+                                        <td class="text-start">
+                                            <div class="fw-bold text-dark text-nowrap">{{ $item->nama_masjid }}</div>
+                                        </td>
+                                        <td class="text-start text-nowrap">
+                                            <small class="text-muted"><i class="fa-solid fa-location-dot me-1"></i> Kec. {{ $item->kecamatan }} / Kel. {{ $item->kelurahan }}</small>
+                                        </td>
+                                        <td class="text-center text-nowrap">
+                                            <span class="badge bg-light text-dark border"><i class="fa-regular fa-compass me-1"></i> {{ $item->latitude }}, {{ $item->longitude }}</span>
+                                        </td>
+                                        <td class="text-center text-nowrap">
+                                            @if($item->status_sertipikat == 'Sudah Bersertipikat')
+                                                <span class="badge bg-success-subtle text-success border border-success px-3 py-1 rounded-pill">
+                                                    <i class="fa-solid fa-check-circle me-1"></i> Sudah Bersertipikat
+                                                </span>
+                                            @else
+                                                <span class="badge bg-danger-subtle text-danger border border-danger px-3 py-1 rounded-pill">
+                                                    <i class="fa-solid fa-xmark-circle me-1"></i> Belum Bersertipikat
+                                                </span>
+                                            @endif
+                                        </td>
+                                        <td class="text-center text-nowrap">
+                                            @if($item->jenis_hak || $item->nomor_hak)
+                                                <span class="badge bg-info-subtle text-info-emphasis border px-2 py-1">
+                                                    {{ $item->jenis_hak ?? '-' }} No. {{ $item->nomor_hak ?? '-' }}
+                                                </span>
+                                            @else
+                                                <span class="text-muted small">-</span>
+                                            @endif
+                                        </td>
+                                        <td class="text-center fw-semibold">{{ number_format($item->luas_tanah) }}</td>
+                                        <td class="text-center">
+                                            <div class="d-flex justify-content-center gap-1">
+                                                <a href="{{ route('admin.edit', $item->id) }}" class="btn btn-warning btn-sm" title="Edit">
+                                                    <i class="fa-solid fa-pen-to-square"></i>
+                                                </a>
+                                                <form action="{{ route('admin.destroy', $item->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button class="btn btn-danger btn-sm" title="Hapus">
+                                                        <i class="fa-solid fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="8" class="text-center py-5 text-muted">
+                                            <i class="fa-solid fa-folder-open fa-3x mb-3 d-block opacity-50"></i>
+                                            <h5 class="fw-semibold">Data Kosong</h5>
+                                            <p class="mb-0">Belum ada data aset wakaf yang terdaftar.</p>
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <!-- Akhir Tabel Responsif -->
                 
@@ -230,16 +231,11 @@
 
     </div>
 
-    <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Script Chart.js -->
     <script>
-        // Data dari PHP/Database
         const countSudah = {{ $asetWakaf->where('status_sertipikat', 'Sudah Bersertipikat')->count() }};
         const countBelum = {{ $asetWakaf->where('status_sertipikat', 'Belum Bersertipikat')->count() }};
 
-        // 1. Chart Status Sertipikat (Doughnut)
         const ctxStatus = document.getElementById('statusChart').getContext('2d');
         new Chart(ctxStatus, {
             type: 'doughnut',
@@ -254,13 +250,10 @@
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: {
-                    legend: { position: 'bottom' }
-                }
+                plugins: { legend: { position: 'bottom' } }
             }
         });
 
-        // Rekapitulasi Data Per Kecamatan (PHP Aggregation)
         @php
             $kecamatanData = $asetWakaf->groupBy('kecamatan')->map->count();
             $kecamatanLabels = $kecamatanData->keys();
@@ -270,7 +263,6 @@
         const kecLabels = @json($kecamatanLabels);
         const kecValues = @json($kecamatanValues);
 
-        // 2. Chart Sebaran Kecamatan (Bar Chart)
         const ctxKecamatan = document.getElementById('kecamatanChart').getContext('2d');
         new Chart(ctxKecamatan, {
             type: 'bar',
@@ -286,15 +278,8 @@
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: { stepSize: 1 }
-                    }
-                },
-                plugins: {
-                    legend: { display: false }
-                }
+                scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
+                plugins: { legend: { display: false } }
             }
         });
     </script>
