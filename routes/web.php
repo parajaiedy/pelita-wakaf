@@ -3,17 +3,12 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\WakafController;
 use App\Http\Controllers\AuthController;
-use App\Models\AsetWakaf; // Menambahkan panggian Model agar aman
 
 // Route Peta Utama (Bawaan)
 Route::get('/', [WakafController::class, 'index'])->name('home');
 
-// Route Peta Publik Full Screen (Baru)
-Route::get('/peta', function () {
-    // Memanggil data langsung dari Model, dijamin tidak akan salah nama tabel
-    $asets = AsetWakaf::all(); 
-    return view('peta_publik', compact('asets'));
-});
+// Route Peta Publik Full Screen (Ini rute barunya)
+Route::get('/peta', [WakafController::class, 'petaPublik'])->name('peta.publik');
 
 // Route Auth (Login & Logout)
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');

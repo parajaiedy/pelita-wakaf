@@ -7,11 +7,19 @@ use App\Models\AsetWakaf;
 
 class WakafController extends Controller
 {
-    // Halaman Peta Utama
+    // Halaman Beranda / Welcome
     public function index()
     {
         $asetWakaf = AsetWakaf::all();
         return view('welcome', compact('asetWakaf'));
+    }
+
+    // Halaman Peta Publik Full Screen (Ini fungsi baru kita, Pak!)
+    public function petaPublik()
+    {
+        // Mengambil semua data dari model yang dijamin benar
+        $asets = AsetWakaf::all();
+        return view('peta_publik', compact('asets'));
     }
 
     // Halaman Tabel Admin
