@@ -30,24 +30,23 @@
 
                 <div class="row">
                    <div class="col-md-6 mb-3">
-    <label for="kecamatan" class="form-label fw-semibold">Kecamatan</label>
-    <select name="kecamatan" id="kecamatan" class="form-select" required>
-        <option value="">-- Pilih Kecamatan --</option>
-        <option value="Bacukiki" {{ $aset->kecamatan == 'Bacukiki' ? 'selected' : '' }}>Bacukiki</option>
-        <option value="Bacukiki Barat" {{ $aset->kecamatan == 'Bacukiki Barat' ? 'selected' : '' }}>Bacukiki Barat</option>
-        <option value="Soreang" {{ $aset->kecamatan == 'Soreang' ? 'selected' : '' }}>Soreang</option>
-        <option value="Ujung" {{ $aset->kecamatan == 'Ujung' ? 'selected' : '' }}>Ujung</option>
-    </select>
-</div>
+                        <label for="kecamatan" class="form-label fw-semibold">Kecamatan</label>
+                        <select name="kecamatan" id="kecamatan" class="form-select" required>
+                            <option value="">-- Pilih Kecamatan --</option>
+                            <option value="Bacukiki" {{ $aset->kecamatan == 'Bacukiki' ? 'selected' : '' }}>Bacukiki</option>
+                            <option value="Bacukiki Barat" {{ $aset->kecamatan == 'Bacukiki Barat' ? 'selected' : '' }}>Bacukiki Barat</option>
+                            <option value="Soreang" {{ $aset->kecamatan == 'Soreang' ? 'selected' : '' }}>Soreang</option>
+                            <option value="Ujung" {{ $aset->kecamatan == 'Ujung' ? 'selected' : '' }}>Ujung</option>
+                        </select>
+                    </div>
 
-<div class="col-md-6 mb-3">
-    <label for="kelurahan" class="form-label fw-semibold">Kelurahan</label>
-    <select name="kelurahan" id="kelurahan" class="form-select" data-selected="{{ $aset->kelurahan }}" required>
-        <option value="">-- Pilih Kelurahan --</option>
-    </select>
-</div>
-
-
+                    <div class="col-md-6 mb-3">
+                        <label for="kelurahan" class="form-label fw-semibold">Kelurahan</label>
+                        <select name="kelurahan" id="kelurahan" class="form-select" data-selected="{{ $aset->kelurahan }}" required>
+                            <option value="">-- Pilih Kelurahan --</option>
+                        </select>
+                    </div>
+                </div>
 
                 <!-- Interactive Map Picker -->
                 <div class="mb-3">
@@ -140,8 +139,7 @@
         marker.setLatLng([lat, lng]);
         updateInputs(lat, lng);
     });
-</script>
-<script>
+
     // --- Fitur geser pin otomatis saat kolom diketik manual ---
     const inputLat = document.querySelector('input[name="latitude"]');
     const inputLng = document.querySelector('input[name="longitude"]');
@@ -162,7 +160,8 @@
         inputLat.addEventListener('input', pindahPinSesuaiKetik);
         inputLng.addEventListener('input', pindahPinSesuaiKetik);
     }
-</script>
+
+    // --- Fitur Kelurahan Otomatis untuk Halaman Edit ---
     document.addEventListener("DOMContentLoaded", function() {
         const dataWilayah = {
             "Bacukiki": ["Galung Maloang", "Lemoe", "Lompoe", "Watang Bacukiki"],
