@@ -23,6 +23,18 @@
             background: transparent;
             border: none;
         }
+
+        /* Label Kecamatan */
+        .kec-label {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid #333;
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 12px;
+            font-weight: bold;
+            box-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -44,12 +56,89 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-    var map = L.map('map').setView([-4.00165, 119.64347], 13);
+    // 1. Inisialisasi Peta
+    var map = L.map('map').setView([-4.015, 119.635], 13); // Digeser sedikit agar Parepare pas di tengah layar
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap'
     }).addTo(map);
 
+    // 2. Data GeoJSON Kasar untuk Batas 4 Kecamatan di Parepare (Polygon)
+    var dataKecamatan = [
+        {
+            "type": "Feature",
+            "properties": { "kecamatan": "Kec. Bacukiki", "color": "#28a745" },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [[
+                    [119.645, -4.010], [119.670, -3.990], [119.690, -4.000], [119.705, -4.030], 
+                    [119.710, -4.060], [119.670, -4.070], [119.645, -4.045], [119.645, -4.010]
+                ]]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": { "kecamatan": "Kec. Bacukiki Barat", "color": "#dc3545" },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [[
+                    [119.620, -4.012], [119.645, -4.010], [119.645, -4.045], 
+                    [119.625, -4.060], [119.615, -4.050], [119.615, -4.020], [119.620, -4.012]
+                ]]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": { "kecamatan": "Kec. Soreang", "color": "#007bff" },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [[
+                    [119.625, -4.002], [119.645, -3.970], [119.660, -3.960], 
+                    [119.670, -3.990], [119.645, -4.010], [119.635, -4.002], [119.625, -4.002]
+                ]]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": { "kecamatan": "Kec. Ujung", "color": "#fd7e14" },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [[
+                    [119.615, -4.015], [119.620, -4.012], [119.625, -4.002], 
+                    [119.635, -4.002], [119.645, -4.010], [119.620, -4.025], [119.615, -4.015]
+                ]]
+            }
+        }
+    ];
+
+    // 3. Menambahkan Polygon ke Peta
+    L.geoJSON(dataKecamatan, {
+        style: function (feature) {
+            return {
+                color: feature.properties.color,
+                fillColor: feature.properties.color,
+                weight: 2,
+                opacity: 0.8,
+                fillOpacity: 0.15 // Transparansi isi warna wilayah
+            };
+        },
+        onEachFeature: function (feature, layer) {
+            // Label Nama Kecamatan di tengah polygon
+            var center = layer.getBounds().getCenter();
+            var labelMarker = L.marker(center, {
+                icon: L.divIcon({
+                    className: 'kec-label',
+                    html: feature.properties.kecamatan,
+                    iconSize: [110, 25],
+                    iconAnchor: [55, 12]
+                }),
+                interactive: false
+            }).addTo(map);
+        }
+    }).addTo(map);
+
+
+    // 4. Proses Menampilkan Data Aset (Titik Multi-warna)
     var asetData = [
         @foreach($asets as$aset)
         {
@@ -68,24 +157,24 @@
     asetData.forEach(function(data) {
         if(data.lat !== 0 && data.lng !== 0) {
             
-            // 1. Default: Merah (Untuk Kosong / Belum Bersertipikat)
+            // Default: Merah (Kosong / Belum Bersertipikat)
             var pinColor = '#dc3545'; 
             
-            // 2. KUNCI PERUBAHAN WARNA BERDASARKAN JENIS HAK
+            // KUNCI PERUBAHAN WARNA BERDASARKAN JENIS HAK
             if (data.jenis_hak === 'Hak Wakaf') {
-                pinColor = '#198754'; // Hijau 🟢
+                pinColor = '#198754'; // Hijau
             } else if (data.jenis_hak === 'Hak Milik') {
-                pinColor = '#ffc107'; // Kuning 🟡
-            } else if (data.jenis_hak === 'Hak Guna Bangunan') {
-                pinColor = '#d63384'; // Pink/Ungu Muda (Bebas yang mencolok) 🟣
+                pinColor = '#ffc107'; // Kuning
+            } else if (data.jenis_hak === 'Hak Guna Bangunan' || data.jenis_hak === 'HGB') {
+                pinColor = '#d63384'; // Pink
             } else if (data.jenis_hak === 'Hak Pakai') {
-                pinColor = '#8B4513'; // Coklat 🟤
+                pinColor = '#8B4513'; // Coklat
             }
 
-            // Pembuatan Marker
+            // Pembuatan Marker Vektor FontAwesome
             var customIcon = L.divIcon({
                 className: 'custom-pin',
-                html: `<i class="fa-solid fa-location-dot" style="color: ${pinColor}; font-size: 36px; text-shadow: 2px 2px 4px rgba(0,0,0,0.6); -webkit-text-stroke: 1px #000;"></i>`,
+                html: `<i class="fa-solid fa-location-dot" style="color: ${pinColor}; font-size: 32px; text-shadow: 2px 2px 4px rgba(0,0,0,0.6); -webkit-text-stroke: 1px #fff;"></i>`,
                 iconSize: [30, 36],
                 iconAnchor: [15, 36],
                 popupAnchor: [0, -36]
