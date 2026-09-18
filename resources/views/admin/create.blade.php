@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         #map-picker { height: 280px; width: 100%; border-radius: 8px; }
-        .auto-fill-loading { opacity: 0.5; pointer-events: none; }
     </style>
 </head>
 <body class="bg-light">
@@ -28,12 +27,34 @@
                     <input type="text" name="nama_masjid" class="form-control" placeholder="Contoh: Masjid Agung Parepare" required>
                 </div>
 
+                <!-- Interactive Map Picker -->
+                <div class="mb-3">
+                    <label class="form-label fw-semibold d-flex justify-content-between align-items-center">
+                        <span><i class="fa-solid fa-location-crosshairs text-danger me-1"></i> Pilih Lokasi pada Peta</span>
+                        <small class="text-muted font-monospace">Geser pin untuk auto-fill</small>
+                    </label>
+                    <div id="map-picker" class="border shadow-sm mb-1"></div>
+                    <!-- Indikator Pencarian Satelit -->
+                    <div id="status-satelit" class="text-muted small fw-bold">
+                        <i class="fa-solid fa-satellite-dish"></i> Status Satelit: Menunggu pin digeser...
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Latitude</label>
+                        <input type="text" id="latitude" name="latitude" class="form-control bg-light" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Longitude</label>
+                        <input type="text" id="longitude" name="longitude" class="form-control bg-light" required>
+                    </div>
+                </div>
+
                 <!-- Bagian Kecamatan & Kelurahan -->
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label for="kecamatan" class="form-label fw-semibold d-flex justify-content-between">
-                            Kecamatan <small id="status-auto" class="text-success" style="display:none;"><i class="fa-solid fa-bolt"></i> Otomatis</small>
-                        </label>
+                        <label for="kecamatan" class="form-label fw-semibold">Kecamatan</label>
                         <select name="kecamatan" id="kecamatan" class="form-select" required>
                             <option value="">-- Pilih Kecamatan --</option>
                             <option value="Bacukiki">Bacukiki</option>
@@ -48,26 +69,6 @@
                         <select name="kelurahan" id="kelurahan" class="form-select" required>
                             <option value="">-- Pilih Kelurahan --</option>
                         </select>
-                    </div>
-                </div>
-
-                <!-- Interactive Map Picker -->
-                <div class="mb-3">
-                    <label class="form-label fw-semibold d-flex justify-content-between align-items-center">
-                        <span><i class="fa-solid fa-location-crosshairs text-danger me-1"></i> Pilih Lokasi pada Peta</span>
-                        <small class="text-muted font-monospace">Geser pin untuk auto-fill</small>
-                    </label>
-                    <div id="map-picker" class="border shadow-sm"></div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-semibold">Latitude</label>
-                        <input type="text" id="latitude" name="latitude" class="form-control bg-light" required>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-semibold">Longitude</label>
-                        <input type="text" id="longitude" name="longitude" class="form-control bg-light" required>
                     </div>
                 </div>
 
@@ -131,102 +132,84 @@
     }
     updateInputs(defaultLat, defaultLng);
 
-    // KODE BARU: Fitur Reverse Geocoding (Cari wilayah otomatis)
+    // Fitur Canggih: Reverse Geocoding dengan Pencocokan Pintar
     function cariWilayahOtomatis(lat, lng) {
         let url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`;
         
-        // Munculkan indikator loading
-        document.getElementById('kecamatan').classList.add('auto-fill-loading');
-        document.getElementById('kelurahan').classList.add('auto-fill-loading');
-        document.getElementById('status-auto').style.display = 'none';
+        let statusDiv = document.getElementById('status-satelit');
+        statusDiv.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-warning"></i> <span class="text-warning">Mencari wilayah...</span>';
 
         fetch(url, { headers: { 'Accept-Language': 'id' } })
             .then(response => response.json())
             .then(data => {
                 if (data && data.address) {
                     let alamat = data.address;
-                    // Mengambil nama kecamatan dan kelurahan dari data satelit
-                    let kecSatelit = alamat.city_district || alamat.town || alamat.county || alamat.city || "";
-                    let kelSatelit = alamat.village || alamat.suburb || alamat.neighbourhood || alamat.residential || "";
-
-                    cocokkanDropdown(kecSatelit, kelSatelit);
+                    // Gabungkan semua alamat satelit jadi satu kalimat huruf kecil
+                    let teksSatelit = Object.values(alamat).join(' ').toLowerCase();
+                    
+                    statusDiv.innerHTML = '<i class="fa-solid fa-check-circle text-success"></i> <span class="text-success">Satelit: Wilayah ditemukan. Menerapkan otomatis...</span>';
+                    
+                    cocokkanDropdown(teksSatelit);
+                } else {
+                    statusDiv.innerHTML = '<i class="fa-solid fa-circle-exclamation text-danger"></i> <span class="text-danger">Satelit: Wilayah tidak dikenali.</span>';
                 }
             })
-            .catch(error => console.log("Gagal mengambil data satelit", error))
-            .finally(() => {
-                document.getElementById('kecamatan').classList.remove('auto-fill-loading');
-                document.getElementById('kelurahan').classList.remove('auto-fill-loading');
+            .catch(error => {
+                statusDiv.innerHTML = '<i class="fa-solid fa-wifi text-danger"></i> <span class="text-danger">Gagal menghubungi satelit.</span>';
             });
     }
 
-    // Fungsi mencocokkan kata satelit dengan pilihan di sistem Bapak
-    function cocokkanDropdown(kecSatelit, kelSatelit) {
+    function cocokkanDropdown(teksSatelit) {
         let kecSelect = document.getElementById('kecamatan');
         let kelSelect = document.getElementById('kelurahan');
-        let statusAuto = document.getElementById('status-auto');
         let berhasilKec = false;
 
-        // 1. Cocokkan Kecamatan
-        for (let i = 0; i < kecSelect.options.length; i++) {
-            let opsiKec = kecSelect.options[i].value;
-            if (opsiKec !== "" && kecSatelit.toLowerCase().includes(opsiKec.toLowerCase())) {
+        // 1. Cocokkan Kecamatan (memaksa pencarian teks)
+        for (let i = 1; i < kecSelect.options.length; i++) {
+            let opsiKec = kecSelect.options[i].value.toLowerCase();
+            // Cek apakah teks satelit mengandung kata kecamatan kita
+            if (teksSatelit.includes(opsiKec)) {
                 kecSelect.selectedIndex = i;
-                kecSelect.dispatchEvent(new Event('change')); // Pancing kelurahan agar muncul
+                kecSelect.dispatchEvent(new Event('change')); // Memicu kelurahan agar muncul
                 berhasilKec = true;
                 break;
             }
         }
 
-        // 2. Cocokkan Kelurahan (Beri jeda agar daftar kelurahan selesai dibuat)
+        // 2. Cocokkan Kelurahan (tunggu 0.5 detik agar daftar kelurahan selesai di-load)
         if(berhasilKec) {
             setTimeout(() => {
-                for (let j = 0; j < kelSelect.options.length; j++) {
-                    let opsiKel = kelSelect.options[j].value;
-                    if (opsiKel !== "" && kelSatelit.toLowerCase().includes(opsiKel.toLowerCase())) {
+                for (let j = 1; j < kelSelect.options.length; j++) {
+                    let opsiKel = kelSelect.options[j].value.toLowerCase();
+                    if (teksSatelit.includes(opsiKel)) {
                         kelSelect.selectedIndex = j;
-                        statusAuto.style.display = 'inline'; // Munculkan teks "Otomatis"
+                        document.getElementById('status-satelit').innerHTML = '<i class="fa-solid fa-check-circle text-success"></i> <span class="text-success">Satelit: Otomatis diterapkan!</span>';
                         break;
                     }
                 }
-            }, 300);
+            }, 500);
         }
     }
 
-    // Eksekusi setiap kali marker selesai digeser
+    // Panggil satelit setiap marker digeser
     marker.on('dragend', function (e) {
         var position = marker.getLatLng();
         updateInputs(position.lat, position.lng);
-        cariWilayahOtomatis(position.lat, position.lng); // Panggil fungsi otomatis
+        cariWilayahOtomatis(position.lat, position.lng);
     });
 
-    // Eksekusi setiap kali peta diklik
+    // Panggil satelit setiap peta diklik
     pickerMap.on('click', function (e) {
         var lat = e.latlng.lat;
         var lng = e.latlng.lng;
         marker.setLatLng([lat, lng]);
         updateInputs(lat, lng);
-        cariWilayahOtomatis(lat, lng); // Panggil fungsi otomatis
+        cariWilayahOtomatis(lat, lng);
     });
 
-    const inputLat = document.querySelector('input[name="latitude"]');
-    const inputLng = document.querySelector('input[name="longitude"]');
-
-    function pindahPinSesuaiKetik() {
-        let latTeks = parseFloat(inputLat.value);
-        let lngTeks = parseFloat(inputLng.value);
-        if (!isNaN(latTeks) && !isNaN(lngTeks)) {
-            marker.setLatLng([latTeks, lngTeks]);
-            pickerMap.setView([latTeks, lngTeks]); 
-        }
-    }
-
-    if(inputLat && inputLng) {
-        inputLat.addEventListener('input', pindahPinSesuaiKetik);
-        inputLng.addEventListener('input', pindahPinSesuaiKetik);
-    }
 </script>
 
-<!-- Script Kelurahan (Anti-Macet) -->
+<!-- Script Kelurahan -->
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         setTimeout(function() {
@@ -255,7 +238,7 @@
                     }
                 });
             }
-        }, 500); 
+        }, 300); 
     });
 </script>
 </body>
