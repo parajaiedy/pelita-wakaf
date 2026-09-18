@@ -11,12 +11,12 @@
     <style>
         body { background-color: #f4f6f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         .navbar-custom { background-color: #1e293b; color: white; }
-        .card-stat { border: none; border-radius: 12px; transition: transform 0.2s; }
-        .card-stat:hover { transform: translateY(-3px); }
-        .chart-card { border: none; border-radius: 12px; }
+        .card-stat { border: none; border-radius: 12px; transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .card-stat:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important; }
+        .chart-card { border: none; border-radius: 12px; background: #ffffff; }
         
         /* Tambahan agar tabel tidak kaku */
-        .table thead th { background-color: #0f172a; color: white; border-bottom: none; }
+        .table thead th { background-color: #0f172a; color: white; border-bottom: none; padding: 12px 15px; }
         .badge { white-space: normal; text-align: center; }
         
         /* Memaksa kolom tabel agar tidak berdempetan dan membungkus kata dengan rapi */
@@ -111,8 +111,8 @@
             <div class="col-12 col-lg-5">
                 <div class="card chart-card shadow-sm h-100">
                     <div class="card-body p-4">
-                        <h5 class="fw-bold text-dark mb-3"><i class="fa-solid fa-chart-pie me-2 text-primary"></i>Status Sertipikasi</h5>
-                        <div style="height: 250px;" class="d-flex align-items-center justify-content-center">
+                        <h5 class="fw-bold text-dark mb-3 border-bottom pb-2"><i class="fa-solid fa-chart-pie me-2 text-primary"></i>Status Sertipikasi</h5>
+                        <div style="height: 280px;" class="d-flex align-items-center justify-content-center mt-3">
                             <canvas id="statusChart"></canvas>
                         </div>
                     </div>
@@ -122,8 +122,8 @@
             <div class="col-12 col-lg-7">
                 <div class="card chart-card shadow-sm h-100">
                     <div class="card-body p-4">
-                        <h5 class="fw-bold text-dark mb-3"><i class="fa-solid fa-chart-column me-2 text-success"></i>Sebaran Aset per Kecamatan</h5>
-                        <div style="height: 250px;">
+                        <h5 class="fw-bold text-dark mb-3 border-bottom pb-2"><i class="fa-solid fa-chart-column me-2 text-success"></i>Sebaran Aset per Kecamatan</h5>
+                        <div style="height: 280px;" class="mt-3">
                             <canvas id="kecamatanChart"></canvas>
                         </div>
                     </div>
@@ -138,7 +138,7 @@
                     <h4 class="fw-bold text-dark mb-0">Daftar Aset Wakaf Parepare</h4>
                     <div class="d-flex flex-wrap gap-2">
                         <a href="{{ route('admin.exportExcel') }}" class="btn btn-success shadow-sm flex-fill">
-                            <i class="fa-solid fa-file-excel me-1"></i> Export
+                            <i class="fa-solid fa-file-excel me-1"></i> Export Excel
                         </a>
                         <a href="{{ route('admin.create') }}" class="btn btn-primary shadow-sm flex-fill">
                             <i class="fa-solid fa-plus me-1"></i> Tambah Aset
@@ -146,7 +146,6 @@
                     </div>
                 </div>
 
-                <!-- KUNCI PERBAIKAN: Dibungkus dengan border biasa, lalu table-responsive di dalamnya murni -->
                 <div class="border rounded">
                     <div class="table-responsive">
                         <table class="table table-hover table-striped align-middle mb-0">
@@ -224,7 +223,6 @@
                         </table>
                     </div>
                 </div>
-                <!-- Akhir Tabel Responsif -->
                 
             </div>
         </div>
@@ -233,6 +231,11 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Set Font Global untuk Chart.js agar terlihat lebih modern
+        Chart.defaults.font.family = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+        Chart.defaults.color = '#475569';
+
+        // 1. DATA DOUGHNUT CHART (STATUS SERTIPIKAT)
         const countSudah = {{ $asetWakaf->where('status_sertipikat', 'Sudah Bersertipikat')->count() }};
         const countBelum = {{ $asetWakaf->where('status_sertipikat', 'Belum Bersertipikat')->count() }};
 
@@ -243,17 +246,34 @@
                 labels: ['Sudah Bersertipikat', 'Belum Bersertipikat'],
                 datasets: [{
                     data: [countSudah, countBelum],
-                    backgroundColor: ['#198754', '#dc3545'],
-                    borderWidth: 2
+                    backgroundColor: ['#198754', '#dc3545'], // Hijau & Merah
+                    hoverBackgroundColor: ['#146c43', '#b02a37'],
+                    borderWidth: 3,
+                    borderColor: '#ffffff',
+                    hoverOffset: 6
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { position: 'bottom' } }
+                cutout: '65%', // Membuat lubang donat lebih elegan
+                plugins: { 
+                    legend: { position: 'bottom', labels: { padding: 20, usePointStyle: true } },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) { label += ': '; }
+                                label += context.parsed + ' Aset';
+                                return label;
+                            }
+                        }
+                    }
+                }
             }
         });
 
+        // 2. DATA BAR CHART (SEBARAN KECAMATAN)
         @php
             $kecamatanData = $asetWakaf->groupBy('kecamatan')->map->count();
             $kecamatanLabels = $kecamatanData->keys();
@@ -263,6 +283,15 @@
         const kecLabels = @json($kecamatanLabels);
         const kecValues = @json($kecamatanValues);
 
+        // Map Warna Kecamatan agar sinkron dengan Polygon di Peta Publik!
+        const baseColors = {
+            'Soreang': 'rgba(37, 99, 235, 0.85)',       // Biru
+            'Ujung': 'rgba(124, 58, 237, 0.85)',        // Ungu
+            'Bacukiki Barat': 'rgba(219, 39, 119, 0.85)', // Pink
+            'Bacukiki': 'rgba(5, 150, 105, 0.85)'       // Hijau
+        };
+        const bgColors = kecLabels.map(label => baseColors[label] || 'rgba(13, 110, 253, 0.85)');
+
         const ctxKecamatan = document.getElementById('kecamatanChart').getContext('2d');
         new Chart(ctxKecamatan, {
             type: 'bar',
@@ -271,15 +300,38 @@
                 datasets: [{
                     label: 'Jumlah Aset Wakaf',
                     data: kecValues,
-                    backgroundColor: '#0d6efd',
-                    borderRadius: 6
+                    backgroundColor: bgColors,
+                    borderRadius: 8, // Ujung batang melengkung elegan
+                    barThickness: 45
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
-                plugins: { legend: { display: false } }
+                scales: { 
+                    y: { 
+                        beginAtZero: true, 
+                        grid: { borderDash: [5, 5], color: '#e2e8f0' },
+                        ticks: { stepSize: 10 }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                },
+                plugins: { 
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.parsed.y + ' Aset';
+                            }
+                        }
+                    }
+                },
+                animation: {
+                    duration: 1500,
+                    easing: 'easeOutQuart'
+                }
             }
         });
     </script>
