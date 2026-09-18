@@ -16,7 +16,6 @@
         .popup-custom h6 { font-weight: 700; color: #0d6efd; margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
         .popup-custom p { margin: 4px 0; font-size: 13.5px; }
 
-        /* CSS untuk memastikan ikon vektor berada tepat di titik koordinat */
         .custom-pin {
             display: flex;
             justify-content: center;
@@ -51,7 +50,6 @@
         attribution: '&copy; OpenStreetMap'
     }).addTo(map);
 
-    // Ambil data dari database dan sertakan 'jenis_hak'
     var asetData = [
         @foreach($asets as$aset)
         {
@@ -70,22 +68,21 @@
     asetData.forEach(function(data) {
         if(data.lat !== 0 && data.lng !== 0) {
             
-            // 1. Tentukan Warna Default (Merah untuk yang belum ada status jelas / Kosong)
-            var pinColor = '#dc3545'; // Merah
+            // 1. Default: Merah (Untuk Kosong / Belum Bersertipikat)
+            var pinColor = '#dc3545'; 
             
-            // 2. Logika Pewarnaan Berdasarkan Jenis Hak
-            if (data.status.includes('Sudah')) {
-                pinColor = '#198754'; // Hijau (Hak Wakaf / Sudah Sertipikat)
-            } else if (data.jenis_hak.includes('Milik')) {
-                pinColor = '#ffc107'; // Kuning (Hak Milik)
-            } else if (data.jenis_hak.includes('Bangunan') || data.jenis_hak.includes('HGB')) {
-                pinColor = '#ff69b4'; // Pink (HGB)
-            } else if (data.jenis_hak.includes('Pakai')) {
-                pinColor = '#ffffff'; // Putih (Hak Pakai)
+            // 2. KUNCI PERUBAHAN WARNA BERDASARKAN JENIS HAK
+            if (data.jenis_hak === 'Hak Wakaf') {
+                pinColor = '#198754'; // Hijau 🟢
+            } else if (data.jenis_hak === 'Hak Milik') {
+                pinColor = '#ffc107'; // Kuning 🟡
+            } else if (data.jenis_hak === 'Hak Guna Bangunan') {
+                pinColor = '#d63384'; // Pink/Ungu Muda (Bebas yang mencolok) 🟣
+            } else if (data.jenis_hak === 'Hak Pakai') {
+                pinColor = '#8B4513'; // Coklat 🟤
             }
 
-            // 3. Buat Ikon Vektor (Bisa diwarnai sesuka hati)
-            // Catatan: Saya tambahkan garis tepi hitam (text-stroke/shadow) agar warna putih dan kuning tetap terlihat jelas di atas peta yang terang
+            // Pembuatan Marker
             var customIcon = L.divIcon({
                 className: 'custom-pin',
                 html: `<i class="fa-solid fa-location-dot" style="color: ${pinColor}; font-size: 36px; text-shadow: 2px 2px 4px rgba(0,0,0,0.6); -webkit-text-stroke: 1px #000;"></i>`,
@@ -96,7 +93,6 @@
             
             var marker = L.marker([data.lat, data.lng], {icon: customIcon}).addTo(map);
             
-            // 4. Siapkan isi Popup (Saya tambahkan info Jenis Hak di dalamnya)
             var iconStatus = data.status.includes('Sudah') 
                              ? '<i class="fa-solid fa-check-circle text-success"></i>' 
                              : '<i class="fa-solid fa-circle-exclamation text-danger"></i>';
