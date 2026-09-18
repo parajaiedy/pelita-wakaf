@@ -87,6 +87,15 @@
             display: inline-block;
             text-decoration: none;
         }
+
+        /* Tambahan Kelas untuk Pin Kustom Kita */
+        .custom-pin {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            background: transparent;
+            border: none;
+        }
     </style>
 </head>
 <body>
@@ -281,19 +290,6 @@
             }
         }).addTo(batasWilayahLayer);
 
-        // Custom Marker Icons
-        var ikonHijau = L.icon({
-            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
-            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
-            iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
-        });
-
-        var ikonMerah = L.icon({
-            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
-            iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
-        });
-
         // Load data dari Controller
         var dataMasjid = @json($asetWakaf);
 
@@ -302,21 +298,45 @@
         let belumSertipikat = 0;
 
         dataMasjid.forEach(function(item) {
-            let pilihanIkon = (item.status_sertipikat === "Sudah Bersertipikat") ? ikonHijau : ikonMerah;
-
+            
+            // 1. Penghitungan Statistik Sidebar
             if (item.status_sertipikat === "Sudah Bersertipikat") {
                 bersertipikat++;
             } else {
                 belumSertipikat++;
             }
 
+            // 2. Logika Vektor Warna-Warni Berdasarkan Hak (Kebal Spasi)
+            var pinColor = '#dc3545'; // Default: Merah (Kosong / Belum Sertipikat)
+            var hak = (item.jenis_hak || '').toLowerCase();
+
+            if (hak.includes('wakaf')) {
+                pinColor = '#198754'; // Hijau
+            } else if (hak.includes('milik')) {
+                pinColor = '#ffc107'; // Kuning
+            } else if (hak.includes('bangunan') || hak.includes('hgb')) {
+                pinColor = '#d63384'; // Pink
+            } else if (hak.includes('pakai')) {
+                pinColor = '#8B4513'; // Coklat
+            }
+
+            // Membuat Ikon Vektor FontAwesome
+            var customIcon = L.divIcon({
+                className: 'custom-pin',
+                html: `<i class="fa-solid fa-location-dot" style="color: ${pinColor}; font-size: 36px; text-shadow: 2px 2px 4px rgba(0,0,0,0.6); -webkit-text-stroke: 1px #fff;"></i>`,
+                iconSize: [30, 36],
+                iconAnchor: [15, 36],
+                popupAnchor: [0, -36]
+            });
+
+            // 3. Status dan Pembuatan Marker
             var statusBadge = (item.status_sertipikat === "Sudah Bersertipikat")
                 ? '<span class="badge bg-success"><i class="fa-solid fa-check me-1"></i>Sudah Bersertipikat</span>'
                 : '<span class="badge bg-danger"><i class="fa-solid fa-xmark me-1"></i>Belum Bersertipikat</span>';
 
             var googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${item.latitude},${item.longitude}`;
 
-            var marker = L.marker([item.latitude, item.longitude], {icon: pilihanIkon}).addTo(map);
+            var marker = L.marker([item.latitude, item.longitude], {icon: customIcon}).addTo(map);
 
             marker.bindTooltip(item.nama_masjid, { permanent: false, direction: 'top' });
 
