@@ -123,7 +123,6 @@
             };
         },
         onEachFeature: function (feature, layer) {
-            // Label Nama Kecamatan di tengah polygon
             var center = layer.getBounds().getCenter();
             var labelMarker = L.marker(center, {
                 icon: L.divIcon({
@@ -149,6 +148,7 @@
             kelurahan: "{!! $aset->kelurahan !!}",
             status: "{!! $aset->status_sertipikat !!}",
             jenis_hak: "{!! $aset->jenis_hak ?? '-' !!}",
+            nomor_hak: "{!! $aset->nomor_hak ?? '-' !!}",
             luas: "{{ $aset->luas_tanah }}"
         },
         @endforeach
@@ -157,24 +157,24 @@
     asetData.forEach(function(data) {
         if(data.lat !== 0 && data.lng !== 0) {
             
-            // Default: Merah (Kosong / Belum Bersertipikat)
-            var pinColor = '#dc3545'; 
-            
-            // KUNCI PERUBAHAN WARNA BERDASARKAN JENIS HAK
-            if (data.jenis_hak === 'Hak Wakaf') {
-                pinColor = '#198754'; // Hijau
-            } else if (data.jenis_hak === 'Hak Milik') {
-                pinColor = '#ffc107'; // Kuning
-            } else if (data.jenis_hak === 'Hak Guna Bangunan' || data.jenis_hak === 'HGB') {
-                pinColor = '#d63384'; // Pink
-            } else if (data.jenis_hak === 'Hak Pakai') {
-                pinColor = '#8B4513'; // Coklat
+            // 1. Logika Warna Pintar (Kebal Spasi & Huruf Kecil)
+            var pinColor = '#dc3545'; // Merah Default (Kosong)
+            var hak = (data.jenis_hak || '').toLowerCase();
+
+            if (hak.includes('wakaf')) {
+                pinColor = '#198754'; // Hijau 🟢
+            } else if (hak.includes('milik')) {
+                pinColor = '#ffc107'; // Kuning 🟡
+            } else if (hak.includes('bangunan') || hak.includes('hgb')) {
+                pinColor = '#d63384'; // Pink 🟣
+            } else if (hak.includes('pakai')) {
+                pinColor = '#8B4513'; // Coklat 🟤
             }
 
-            // Pembuatan Marker Vektor FontAwesome
+            // 2. Gunakan Vektor Multiwarna FontAwesome
             var customIcon = L.divIcon({
                 className: 'custom-pin',
-                html: `<i class="fa-solid fa-location-dot" style="color: ${pinColor}; font-size: 32px; text-shadow: 2px 2px 4px rgba(0,0,0,0.6); -webkit-text-stroke: 1px #fff;"></i>`,
+                html: `<i class="fa-solid fa-location-dot" style="color: ${pinColor}; font-size: 36px; text-shadow: 2px 2px 4px rgba(0,0,0,0.6); -webkit-text-stroke: 1px #fff;"></i>`,
                 iconSize: [30, 36],
                 iconAnchor: [15, 36],
                 popupAnchor: [0, -36]
@@ -182,17 +182,28 @@
             
             var marker = L.marker([data.lat, data.lng], {icon: customIcon}).addTo(map);
             
+            // 3. Tampilan Popup Keren (Mempertahankan tombol Navigasi Bapak)
             var iconStatus = data.status.includes('Sudah') 
-                             ? '<i class="fa-solid fa-check-circle text-success"></i>' 
-                             : '<i class="fa-solid fa-circle-exclamation text-danger"></i>';
+                             ? '<span class="badge bg-success"><i class="fa-solid fa-check"></i> Sudah Bersertipikat</span>' 
+                             : '<span class="badge bg-danger"><i class="fa-solid fa-xmark"></i> Belum Bersertipikat</span>';
             
+            var textHak = data.jenis_hak;
+            if(data.nomor_hak && data.nomor_hak !== '-' && data.nomor_hak !== 'null' && data.nomor_hak !== '') {
+                textHak += ' No. ' + data.nomor_hak;
+            }
+
             var popupContent = `
-                <div class="popup-custom">
-                    <h6><i class="fa-solid fa-mosque me-1"></i> ${data.nama}</h6>
-                    <p><i class="fa-solid fa-map-pin text-secondary" style="width:15px;"></i> ${data.kelurahan}, Kec. ${data.kecamatan}</p>
-                    <p>${iconStatus} <strong>${data.status}</strong></p>
-                    <p><i class="fa-solid fa-file-signature text-secondary" style="width:15px;"></i> Hak: <strong>${data.jenis_hak}</strong></p>
-                    <p><i class="fa-solid fa-maximize text-secondary" style="width:15px;"></i> Luas: ${data.luas} m²</p>
+                <div class="popup-custom text-center">
+                    <h6 class="fw-bold mb-2 text-primary">${data.nama}</h6>
+                    <div class="text-start mb-3" style="font-size: 13px;">
+                        <div class="mb-1"><i class="fa-solid fa-map-pin text-secondary" style="width:20px;"></i> Kec. ${data.kecamatan} / Kel. ${data.kelurahan}</div>
+                        <div class="mb-1"><i class="fa-solid fa-file-contract text-secondary" style="width:20px;"></i> ${textHak}</div>
+                        <div class="mb-2"><i class="fa-solid fa-ruler-combined text-secondary" style="width:20px;"></i> Luas: ${data.luas} m²</div>
+                        <div class="mb-1">${iconStatus}</div>
+                    </div>
+                    <a href="https://www.google.com/maps/dir/?api=1&destination=${data.lat},${data.lng}" target="_blank" class="btn btn-primary btn-sm w-100 rounded text-white fw-bold">
+                        <i class="fa-solid fa-diamond-turn-right"></i> Rute Navigasi Google Maps
+                    </a>
                 </div>
             `;
             marker.bindPopup(popupContent);
