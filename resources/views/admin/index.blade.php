@@ -15,6 +15,11 @@
         .card-stat:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important; }
         .chart-card { border: none; border-radius: 12px; background: #ffffff; }
         
+        /* Tambahan Warna Khusus Hak */
+        .bg-pink { background-color: #d63384 !important; color: white; }
+        .bg-brown { background-color: #8B4513 !important; color: white; }
+        .bg-yellow { background-color: #ffc107 !important; color: #212529; }
+
         /* Tambahan agar tabel tidak kaku */
         .table thead th { background-color: #0f172a; color: white; border-bottom: none; padding: 12px 15px; }
         .badge { white-space: normal; text-align: center; }
@@ -58,8 +63,29 @@
             </div>
         @endif
 
-        <!-- Ringkasan Kartu Statistik -->
-        <div class="row g-3 mb-4">
+        @php
+            // Logika Perhitungan Cerdas Jenis Hak
+            $countWakaf = 0;
+            $countMilik = 0;
+            $countHGB = 0;
+            $countPakai = 0;
+
+            foreach($asetWakaf as $item) {
+                $hak = strtolower($item->jenis_hak ?? '');
+                if (str_contains($hak, 'wakaf')) {
+                    $countWakaf++;
+                } elseif (str_contains($hak, 'milik')) {
+                    $countMilik++;
+                } elseif (str_contains($hak, 'bangunan') || str_contains($hak, 'hgb')) {
+                    $countHGB++;
+                } elseif (str_contains($hak, 'pakai')) {
+                    $countPakai++;
+                }
+            }
+        @endphp
+
+        <!-- Ringkasan Kartu Statistik Utama -->
+        <div class="row g-3 mb-3">
             <div class="col-6 col-md-3">
                 <div class="card card-stat bg-primary text-white shadow-sm h-100">
                     <div class="card-body p-3 d-flex justify-content-between align-items-center">
@@ -94,13 +120,62 @@
                 </div>
             </div>
             <div class="col-6 col-md-3">
-                <div class="card card-stat bg-warning text-dark shadow-sm h-100">
+                <div class="card card-stat bg-secondary text-white shadow-sm h-100">
                     <div class="card-body p-3 d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="text-dark-50 small mb-1">Total Luas (m²)</h6>
+                            <h6 class="text-white-50 small mb-1">Total Luas (m²)</h6>
                             <h3 class="fw-bold mb-0">{{ number_format($asetWakaf->sum('luas_tanah')) }}</h3>
                         </div>
                         <i class="fa-solid fa-ruler-combined fa-2x opacity-50 d-none d-sm-block"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rincian Kartu Berdasarkan Jenis Hak -->
+        <h6 class="fw-bold text-secondary mb-2 mt-2"><i class="fa-solid fa-layer-group me-1"></i> Rincian Berdasarkan Jenis Hak</h6>
+        <div class="row g-3 mb-4">
+            <div class="col-6 col-md-3">
+                <div class="card card-stat text-white shadow-sm h-100" style="background-color: #198754;">
+                    <div class="card-body p-3 d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-white-50 small mb-1">Hak Wakaf</h6>
+                            <h3 class="fw-bold mb-0">{{ $countWakaf }}</h3>
+                        </div>
+                        <i class="fa-solid fa-hand-holding-heart fa-2x opacity-50 d-none d-sm-block"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card card-stat bg-yellow shadow-sm h-100">
+                    <div class="card-body p-3 d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-dark-50 small mb-1 opacity-75">Hak Milik</h6>
+                            <h3 class="fw-bold mb-0">{{ $countMilik }}</h3>
+                        </div>
+                        <i class="fa-solid fa-house-chimney-user fa-2x opacity-25 d-none d-sm-block"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card card-stat bg-pink shadow-sm h-100">
+                    <div class="card-body p-3 d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-white-50 small mb-1">Hak Guna Bangunan</h6>
+                            <h3 class="fw-bold mb-0">{{ $countHGB }}</h3>
+                        </div>
+                        <i class="fa-solid fa-building fa-2x opacity-50 d-none d-sm-block"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card card-stat bg-brown shadow-sm h-100">
+                    <div class="card-body p-3 d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-white-50 small mb-1">Hak Pakai</h6>
+                            <h3 class="fw-bold mb-0">{{ $countPakai }}</h3>
+                        </div>
+                        <i class="fa-solid fa-tractor fa-2x opacity-50 d-none d-sm-block"></i>
                     </div>
                 </div>
             </div>
