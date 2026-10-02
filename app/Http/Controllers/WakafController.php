@@ -50,7 +50,17 @@ class WakafController extends Controller
             'luas_tanah'        => 'required|numeric',
         ]);
 
-        AsetWakaf::create($request->all());
+        AsetWakaf::create($request->only([
+            'nama_masjid',
+            'kecamatan',
+            'kelurahan',
+            'latitude',
+            'longitude',
+            'status_sertipikat',
+            'jenis_hak',
+            'nomor_hak',
+            'luas_tanah',
+        ]));
 
         return redirect()->route('admin.index')->with('success', 'Data aset wakaf berhasil ditambahkan!');
     }
@@ -72,11 +82,23 @@ class WakafController extends Controller
             'latitude'          => 'required|numeric',
             'longitude'         => 'required|numeric',
             'status_sertipikat' => 'required',
+            'jenis_hak'         => 'nullable|string',
+            'nomor_hak'         => 'nullable|string',
             'luas_tanah'        => 'required|numeric',
         ]);
 
         $aset = AsetWakaf::findOrFail($id);
-        $aset->update($request->all());
+        $aset->update($request->only([
+            'nama_masjid',
+            'kecamatan',
+            'kelurahan',
+            'latitude',
+            'longitude',
+            'status_sertipikat',
+            'jenis_hak',
+            'nomor_hak',
+            'luas_tanah',
+        ]));
 
         return redirect()->route('admin.index')->with('success', 'Data aset wakaf berhasil diperbarui!');
     }
@@ -88,5 +110,59 @@ class WakafController extends Controller
         $aset->delete();
 
         return redirect()->route('admin.index')->with('success', 'Data aset wakaf berhasil dihapus!');
+    }
+
+    // Export Data ke Excel (CSV + BOM UTF-8 agar karakter Indonesia terbaca rapi di Excel)
+    public function exportExcel()
+    {
+        $asets = AsetWakaf::orderBy('kecamatan')->orderBy('kelurahan')->get();
+
+        $filename = 'aset-wakaf-parepare-' . date('Ymd-His') . '.csv';
+
+        $headers = [
+            'Content-Type'        => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Cache-Control'       => 'no-store, no-cache, must-revalidate',
+        ];
+
+        $callback = function () use ($asets) {
+            $output = fopen('php://output', 'w');
+
+            // BOM UTF-8 agar Microsoft Excel menampilkan huruf Indonesia dengan benar
+            fwrite($output, "\xEF\xBB\xBF");
+
+            fputcsv($output, [
+                'No',
+                'Nama Masjid / Tanah Wakaf',
+                'Kecamatan',
+                'Kelurahan',
+                'Latitude',
+                'Longitude',
+                'Status Sertipikat',
+                'Jenis Hak',
+                'Nomor Hak',
+                'Luas Tanah (m2)',
+            ]);
+
+            $no = 1;
+            foreach ($asets as $aset) {
+                fputcsv($output, [
+                    $no++,
+                    $aset->nama_masjid,
+                    $aset->kecamatan,
+                    $aset->kelurahan,
+                    $aset->latitude,
+                    $aset->longitude,
+                    $aset->status_sertipikat,
+                    $aset->jenis_hak ?? '-',
+                    $aset->nomor_hak ?? '-',
+                    $aset->luas_tanah,
+                ]);
+            }
+
+            fclose($output);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }

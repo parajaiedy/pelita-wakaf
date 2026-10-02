@@ -7,15 +7,14 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <style>
-        #map-picker { height: 280px; width: 100%; border-radius: 8px; }
-    </style>
-</head>
+
+        @include('partials.styles')
+    </head>
 <body class="bg-light">
 
 <div class="container mt-4 mb-5" style="max-width: 750px;">
     <div class="card shadow-sm border-0">
-        <div class="card-header bg-warning text-dark py-3">
+        <div class="card-header card-header-brand py-3">
             <h5 class="mb-0 fw-bold"><i class="fa-solid fa-pen-to-square me-2"></i>Edit Data Aset Wakaf</h5>
         </div>
         <div class="card-body p-4">
@@ -100,7 +99,7 @@
                 </div>
 
                 <div class="mt-3 d-flex gap-2">
-                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-save me-1"></i> Simpan Perubahan</button>
+                    <button type="submit" class="btn btn-brand"><i class="fa-solid fa-save me-1"></i> Simpan Perubahan</button>
                     <a href="{{ route('admin.index') }}" class="btn btn-secondary">Batal</a>
                 </div>
             </form>

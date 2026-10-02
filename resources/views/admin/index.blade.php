@@ -8,34 +8,18 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        body { background-color: #f4f6f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .navbar-custom { background-color: #1e293b; color: white; }
-        .card-stat { border: none; border-radius: 12px; transition: transform 0.3s ease, box-shadow 0.3s ease; }
-        .card-stat:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important; }
-        .chart-card { border: none; border-radius: 12px; background: #ffffff; }
-        
-        /* Tambahan Warna Khusus Hak */
-        .bg-pink { background-color: #d63384 !important; color: white; }
-        .bg-brown { background-color: #8B4513 !important; color: white; }
-        .bg-yellow { background-color: #ffc107 !important; color: #212529; }
 
-        /* Tambahan agar tabel tidak kaku */
-        .table thead th { background-color: #0f172a; color: white; border-bottom: none; padding: 12px 15px; }
-        .badge { white-space: normal; text-align: center; }
-        
-        /* Memaksa kolom tabel agar tidak berdempetan dan membungkus kata dengan rapi */
-        table th, table td { white-space: nowrap; vertical-align: middle; }
-    </style>
-</head>
+        @include('partials.styles')
+    </head>
 <body>
 
     <!-- Navbar Header -->
     <nav class="navbar navbar-expand-lg navbar-custom px-4 py-3 shadow-sm mb-4">
         <div class="container-fluid flex-wrap gap-2">
-            <a class="navbar-brand text-white fw-bold d-flex align-items-center gap-2" href="#">
-                <i class="fa-solid fa-mosque me-1"></i> <span>Pelita Wakaf Parepare</span>
-            </a>
+            <a class="navbar-brand text-white d-flex align-items-center gap-2" href="#">
+                            <span class="navbar-brand-mark"><i class="fa-solid fa-mosque"></i></span>
+                            <span>Pelita Wakaf Parepare</span>
+                        </a>
             <div class="d-flex align-items-center gap-2 flex-wrap">
                 <span class="badge bg-secondary px-3 py-2 rounded-pill">
                     <i class="fa-solid fa-user me-1"></i> {{ Auth::user()->name }}
@@ -212,18 +196,18 @@
                 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
                     <h4 class="fw-bold text-dark mb-0">Daftar Aset Wakaf Parepare</h4>
                     <div class="d-flex flex-wrap gap-2">
-                        <a href="{{ route('admin.exportExcel') }}" class="btn btn-success shadow-sm flex-fill">
-                            <i class="fa-solid fa-file-excel me-1"></i> Export Excel
-                        </a>
-                        <a href="{{ route('admin.create') }}" class="btn btn-primary shadow-sm flex-fill">
-                            <i class="fa-solid fa-plus me-1"></i> Tambah Aset
-                        </a>
+                        <a href="{{ route('admin.exportExcel') }}" class="btn btn-soft flex-fill">
+                                                    <i class="fa-solid fa-file-excel me-1"></i> Export Excel
+                                                </a>
+                                                <a href="{{ route('admin.create') }}" class="btn btn-brand flex-fill">
+                                                    <i class="fa-solid fa-plus me-1"></i> Tambah Aset
+                                                </a>
                     </div>
                 </div>
 
                 <div class="border rounded">
                     <div class="table-responsive">
-                        <table class="table table-hover table-striped align-middle mb-0">
+                        <table class="table table-modern align-middle mb-0">
                             <thead>
                                 <tr class="text-center text-nowrap">
                                     <th width="4%">No</th>

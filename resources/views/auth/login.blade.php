@@ -9,61 +9,11 @@
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <style>
-        /* Desain Background Gradasi Elegan */
-        body {
-            background: linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%);
-            min-height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        /* Desain Kotak Login */
-        .login-card {
-            border-radius: 1.2rem;
-            box-shadow: 0 1.5rem 4rem rgba(0,0,0,0.2) !important;
-            overflow: hidden;
-            background: #ffffff;
-        }
-        .login-header {
-            padding: 2.5rem 2rem 1.5rem 2rem;
-            text-align: center;
-        }
-        .login-icon {
-            font-size: 3.5rem;
-            color: #0d6efd;
-            margin-bottom: 1rem;
-            filter: drop-shadow(0 4px 6px rgba(13, 110, 253, 0.3));
-        }
-        .form-control {
-            border-radius: 0.6rem;
-            padding: 0.8rem 1rem;
-            background-color: #f8f9fa;
-        }
-        .form-control:focus {
-            box-shadow: none;
-            border-color: #0d6efd;
-            background-color: #fff;
-        }
-        .input-group-text {
-            border-radius: 0.6rem;
-            background-color: #f8f9fa;
-        }
-        .btn-login {
-            border-radius: 0.6rem;
-            padding: 0.8rem 1rem;
-            font-weight: 600;
-            font-size: 1.1rem;
-            letter-spacing: 0.5px;
-            transition: all 0.3s ease;
-        }
-        .btn-login:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 15px rgba(13, 110, 253, 0.3);
-        }
-    </style>
-</head>
-<body class="d-flex align-items-center justify-content-center">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+        @include('partials.styles')
+    </head>
+    <body class="login-shell d-flex align-items-center justify-content-center">
 
 <div class="container">
     <div class="row justify-content-center">
@@ -107,8 +57,8 @@
                             </div>
                         </div>
 
-                        <div class="d-grid mt-5">
-                            <button type="submit" class="btn btn-primary btn-login">
+                        <div class="d-grid mt-4">
+                                                    <button type="submit" class="btn btn-primary btn-login">
                                 Masuk <i class="fa-solid fa-arrow-right ms-2"></i>
                             </button>
                         </div>

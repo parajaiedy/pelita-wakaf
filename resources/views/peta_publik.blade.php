@@ -8,48 +8,28 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <style>
-        body, html { height: 100%; margin: 0; overflow: hidden; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .navbar { background: linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%); padding: 10px 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 1000; }
-        #map { height: calc(100vh - 60px); width: 100%; z-index: 1; }
-        
-        .popup-custom h6 { font-weight: 700; color: #0d6efd; margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
-        .popup-custom p { margin: 4px 0; font-size: 13.5px; }
-
-        .custom-pin {
-            display: flex;
-            justify-content: center;
-            align-items: flex-end;
-            background: transparent;
-            border: none;
-        }
-
-        /* Label Kecamatan */
-        .kec-label {
-            background: rgba(255, 255, 255, 0.8);
-            border: 1px solid #333;
-            border-radius: 4px;
-            padding: 2px 6px;
-            font-size: 12px;
-            font-weight: bold;
-            box-shadow: 1px 1px 3px rgba(0,0,0,0.3);
-            text-align: center;
-        }
-    </style>
-</head>
+    @include('partials.styles')
+        <style>
+            body, html { height: 100%; margin: 0; overflow: hidden; }
+            #map { height: calc(100vh - 60px); width: 100%; z-index: 1; }
+            .navbar { background: linear-gradient(135deg, var(--brand-700) 0%, var(--brand-500) 100%); padding: 10px 20px; box-shadow: 0 4px 14px rgba(15,23,42,.25); z-index: 1000; }
+            .popup-custom h6 { font-weight: 800; color: var(--brand-700); margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+            .popup-custom p { margin: 4px 0; font-size: 13.5px; }
+        </style>
+    </head>
 <body>
 
 <nav class="navbar navbar-dark d-flex justify-content-between align-items-center">
-    <div class="text-white d-flex align-items-center">
-        <i class="fa-solid fa-map-location-dot fs-3 me-2"></i>
-        <div>
-            <h5 class="mb-0 fw-bold">Pelita Wakaf</h5>
-            <small class="opacity-75 d-none d-sm-block" style="font-size: 12px;">Peta Persebaran Aset Wakaf Kota Parepare</small>
+    <div class="text-white d-flex align-items-center gap-2">
+            <span class="navbar-brand-mark"><i class="fa-solid fa-mosque"></i></span>
+            <div>
+                <h5 class="mb-0 fw-bold">Pelita Wakaf</h5>
+                <small class="opacity-75 d-none d-sm-block" style="font-size: 12px;">Peta Persebaran Aset Wakaf Kota Parepare</small>
+            </div>
         </div>
-    </div>
-    <a href="{{ route('login') }}" class="btn btn-light btn-sm fw-semibold text-primary rounded-pill px-3 shadow-sm">
-        <i class="fa-solid fa-right-to-bracket me-1"></i> Login Admin
-    </a>
+        <a href="{{ route('login') }}" class="btn btn-light btn-sm fw-semibold rounded-pill px-3 shadow-sm" style="color: var(--brand-700);">
+            <i class="fa-solid fa-right-to-bracket me-1"></i> Login Admin
+        </a>
 </nav>
 
 <div id="map"></div>
@@ -138,21 +118,21 @@
 
 
     // 4. Proses Menampilkan Data Aset (Titik Multi-warna)
-    var asetData = [
-        @foreach($asets as$aset)
-        {
-            nama: "{!! $aset->nama_masjid !!}",
-            lat: {{ $aset->latitude ?? 0 }},
-            lng: {{ $aset->longitude ?? 0 }},
-            kecamatan: "{!! $aset->kecamatan !!}",
-            kelurahan: "{!! $aset->kelurahan !!}",
-            status: "{!! $aset->status_sertipikat !!}",
-            jenis_hak: "{!! $aset->jenis_hak ?? '-' !!}",
-            nomor_hak: "{!! $aset->nomor_hak ?? '-' !!}",
-            luas: "{{ $aset->luas_tanah }}"
-        },
-        @endforeach
-    ];
+        var asetData = [
+            @foreach($asets as $aset)
+            {
+                nama: @json($aset->nama_masjid),
+                lat: {{ $aset->latitude ?? 0 }},
+                lng: {{ $aset->longitude ?? 0 }},
+                kecamatan: @json($aset->kecamatan),
+                kelurahan: @json($aset->kelurahan),
+                status: @json($aset->status_sertipikat),
+                jenis_hak: @json($aset->jenis_hak ?? '-'),
+                nomor_hak: @json($aset->nomor_hak ?? '-'),
+                luas: "{{ $aset->luas_tanah }}"
+            },
+            @endforeach
+        ];
 
     asetData.forEach(function(data) {
         if(data.lat !== 0 && data.lng !== 0) {
