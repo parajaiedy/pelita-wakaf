@@ -7,6 +7,8 @@
     
     <!-- Leaflet CSS & FontAwesome Icons -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
 
@@ -14,6 +16,37 @@
     <style>
         body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; }
         #map { height: 100vh; width: 100%; z-index: 1; }
+
+        /* Kotak pencarian nama aset */
+        .search-box .input-group-text {
+            background: #fff; border-right: none; border-radius: 10px 0 0 10px;
+        }
+        .search-box .form-control {
+            border-left: none; border-radius: 0 10px 10px 0;
+        }
+        .search-box .form-control:focus {
+            box-shadow: none; border-color: var(--brand-500);
+        }
+
+        /* Legenda warna pin */
+        .legend-box { display: flex; flex-direction: column; gap: 6px; }
+        .legend-row { display: flex; align-items: center; gap: 9px; font-size: .82rem; color: var(--ink-soft); }
+        .legend-dot {
+            width: 14px; height: 14px; border-radius: 50% 50% 50% 0;
+            flex-shrink: 0; transform: rotate(-45deg);
+            box-shadow: 0 1px 2px rgba(0,0,0,.25); border: 2px solid #fff;
+        }
+
+        /* Cluster marker (titik yang bertumpuk dirapikan jadi angka) */
+        .marker-cluster-pelita { background: transparent; }
+        .marker-cluster-pelita .cluster-badge {
+            width: 42px; height: 42px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--brand-600), var(--brand-500));
+            color: #fff; font-weight: 800; font-size: 14px;
+            display: flex; align-items: center; justify-content: center;
+            border: 3px solid rgba(255,255,255,.9);
+            box-shadow: 0 4px 12px rgba(13,148,136,.45);
+        }
     </style>
 </head>
 <body>
@@ -26,6 +59,15 @@
                 <div class="sidebar-brand">Pelita Wakaf</div>
                 <small class="text-muted">BPN Kota Parepare</small>
             </div>
+        </div>
+
+        <!-- Kotak Pencarian Nama Aset -->
+        <div class="search-box mb-3">
+            <div class="input-group input-group-sm">
+                <span class="input-group-text"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
+                <input type="text" id="cari-masjid" class="form-control" placeholder="Cari nama masjid / tanah..." autocomplete="off">
+            </div>
+            <div id="hasil-cari" class="small text-muted mt-1 d-none"></div>
         </div>
 
         <hr class="my-3">
@@ -56,6 +98,16 @@
             <span class="stat-icon-wrap"><i class="fa-solid fa-circle-exclamation"></i></span>
         </div>
 
+        <!-- Legenda Warna Pin -->
+        <h6 class="fw-bold text-secondary mt-3 mb-2"><i class="fa-solid fa-palette me-1"></i> Legenda Warna Pin</h6>
+        <div class="legend-box">
+            <div class="legend-row"><span class="legend-dot" style="background:#198754"></span> Hak Wakaf</div>
+            <div class="legend-row"><span class="legend-dot" style="background:#ffc107"></span> Hak Milik</div>
+            <div class="legend-row"><span class="legend-dot" style="background:#d63384"></span> Hak Guna Bangunan (HGB)</div>
+            <div class="legend-row"><span class="legend-dot" style="background:#8B4513"></span> Hak Pakai</div>
+            <div class="legend-row"><span class="legend-dot" style="background:#dc3545"></span> Belum Bersertipikat / Tanpa Hak</div>
+        </div>
+
         <a href="{{ route('admin.index') }}" class="btn-admin-floating mt-3">
             <i class="fa-solid fa-user-shield me-1"></i> Dashboard Admin
         </a>
@@ -66,6 +118,7 @@
 
     <!-- Leaflet JS & Bootstrap Bundle -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
@@ -182,6 +235,22 @@
         // Load data dari Controller
         var dataMasjid = @json($asetWakaf);
 
+        // Grup cluster marker (203 titik yang bertumpuk dirapikan jadi angka)
+        var clusterGroup = L.markerClusterGroup({
+            maxClusterRadius: 55,
+            showCoverageOnHover: false,
+            iconCreateFunction: function(cluster) {
+                var count = cluster.getChildCount();
+                return L.divIcon({
+                    html: '<div class="cluster-badge">' + count + '</div>',
+                    className: 'marker-cluster-pelita',
+                    iconSize: [42, 42]
+                });
+            }
+        }).addTo(map);
+
+        var allMarkers = [];
+
         let total = dataMasjid.length;
         let bersertipikat = 0;
         let belumSertipikat = 0;
@@ -225,7 +294,15 @@
 
             var googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${item.latitude},${item.longitude}`;
 
-            var marker = L.marker([item.latitude, item.longitude], {icon: customIcon}).addTo(map);
+            var marker = L.marker([item.latitude, item.longitude], {icon: customIcon});
+
+            // Simpan metadata untuk pencarian
+            marker.nama = item.nama_masjid;
+            marker.kecamatan = item.kecamatan;
+            marker.latlngVal = [item.latitude, item.longitude];
+
+            allMarkers.push(marker);
+            clusterGroup.addLayer(marker);
 
             marker.bindTooltip(item.nama_masjid, { permanent: false, direction: 'top' });
 
@@ -244,6 +321,40 @@
         document.getElementById("total-aset").innerText = total;
         document.getElementById("jml-sertipikat").innerText = bersertipikat;
         document.getElementById("jml-belum").innerText = belumSertipikat;
+
+        // ================= PENCARIAN NAMA ASET =================
+        var inputCari = document.getElementById('cari-masjid');
+        var hasilCari = document.getElementById('hasil-cari');
+        var DEFAULT_VIEW = [-4.00165, 119.64347];
+        var DEFAULT_ZOOM = 13;
+
+        inputCari.addEventListener('input', function() {
+            var q = this.value.trim().toLowerCase();
+            clusterGroup.clearLayers();
+
+            var cocok = [];
+            allMarkers.forEach(function(m) {
+                var nama = (m.nama || '').toLowerCase();
+                var kec = (m.kecamatan || '').toLowerCase();
+                if (!q || nama.indexOf(q) !== -1 || kec.indexOf(q) !== -1) {
+                    clusterGroup.addLayer(m);
+                    if (q) cocok.push(L.latLng(m.latlngVal[0], m.latlngVal[1]));
+                }
+            });
+
+            if (q && cocok.length) {
+                map.fitBounds(L.latLngBounds(cocok).pad(0.25));
+                hasilCari.classList.remove('d-none');
+                hasilCari.innerHTML = '<i class="fa-solid fa-circle-check text-success me-1"></i>' + cocok.length + ' aset ditemukan';
+            } else if (q) {
+                hasilCari.classList.remove('d-none');
+                hasilCari.innerHTML = '<i class="fa-solid fa-circle-exclamation text-danger me-1"></i>Tidak ada aset yang cocok';
+                map.setView(DEFAULT_VIEW, DEFAULT_ZOOM);
+            } else {
+                hasilCari.classList.add('d-none');
+                map.setView(DEFAULT_VIEW, DEFAULT_ZOOM);
+            }
+        });
     </script>
 </body>
 </html>

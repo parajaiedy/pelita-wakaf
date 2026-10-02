@@ -164,6 +164,8 @@
     .sidebar-panel {
         position: absolute; top: 20px; left: 20px; z-index: 1000;
         width: 330px;
+        max-height: calc(100vh - 40px);
+        overflow-y: auto;
         background: rgba(255, 255, 255, .9);
         backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
         border-radius: var(--radius-lg);
