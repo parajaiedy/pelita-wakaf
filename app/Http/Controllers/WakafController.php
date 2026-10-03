@@ -57,6 +57,14 @@ class WakafController extends Controller
         return view('admin.index', compact('asetWakaf', 'semuaAset', 'kecamatanList', 'jenisHakList'));
     }
 
+    // Laporan resmi yang siap dicetak / disimpan sebagai PDF dari browser
+    public function laporanPdf()
+    {
+        $asets = AsetWakaf::orderBy('kecamatan')->orderBy('kelurahan')->orderBy('nama_masjid')->get();
+
+        return view('admin.laporan', compact('asets'));
+    }
+
     // Halaman Form Tambah Data
     public function create()
     {

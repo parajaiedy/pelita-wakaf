@@ -18,6 +18,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // Route Admin (Hanya bisa diakses jika SUDAH LOGIN)
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [WakafController::class, 'admin'])->name('index');
+    Route::get('/laporan-pdf', [WakafController::class, 'laporanPdf'])->name('laporanPdf');
     Route::get('/create', [WakafController::class, 'create'])->name('create');
     Route::post('/store', [WakafController::class, 'store'])->name('store');
     Route::get('/edit/{id}', [WakafController::class, 'edit'])->name('edit');

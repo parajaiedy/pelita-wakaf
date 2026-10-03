@@ -220,9 +220,12 @@
                         <small class="text-muted">Kelola, cari, dan filter data aset dengan lebih cepat.</small>
                     </div>
                     <div class="d-flex flex-wrap gap-2">
-                        <a href="{{ route('admin.exportExcel') }}" class="btn btn-soft flex-fill">
-                            <i class="fa-solid fa-file-excel me-1"></i> Export Excel
-                        </a>
+                        <a href="{{ route('admin.laporanPdf') }}" class="btn btn-outline-brand flex-fill" target="_blank">
+                                                    <i class="fa-solid fa-file-pdf me-1"></i> Laporan PDF
+                                                </a>
+                                                <a href="{{ route('admin.exportExcel') }}" class="btn btn-soft flex-fill">
+                                                    <i class="fa-solid fa-file-excel me-1"></i> Export Excel
+                                                </a>
                         <a href="{{ route('admin.create') }}" class="btn btn-brand flex-fill">
                             <i class="fa-solid fa-plus me-1"></i> Tambah Aset
                         </a>
