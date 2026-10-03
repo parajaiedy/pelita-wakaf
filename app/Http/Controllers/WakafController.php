@@ -148,6 +148,35 @@ class WakafController extends Controller
         return redirect()->route('admin.index')->with('success', 'Data aset wakaf berhasil diperbarui!');
     }
 
+    // Ubah status tindak lanjut langsung dari tabel admin.
+    public function updateTindakLanjut(Request $request, $id)
+    {
+        $data = $request->validate([
+            'status_tindak_lanjut' => 'required|string|in:Belum Ditindaklanjuti,Pengumpulan Berkas,Pengukuran,Proses Sertipikasi,Selesai',
+        ]);
+
+        AsetWakaf::findOrFail($id)->update($data);
+
+        return back()->with('success', 'Status tindak lanjut berhasil diperbarui.');
+    }
+
+    // Backup data aset dalam format JSON yang mudah disimpan/diolah kembali.
+    public function backup()
+    {
+        $payload = [
+            'aplikasi' => 'Pelita Wakaf - BPN Kota Parepare',
+            'dibuat_pada' => now()->toIso8601String(),
+            'jumlah_data' => AsetWakaf::count(),
+            'aset' => AsetWakaf::orderBy('id')->get()->toArray(),
+        ];
+
+        return response()->streamDownload(function () use ($payload) {
+            echo json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        }, 'backup-pelita-wakaf-' . now()->format('Ymd-His') . '.json', [
+            'Content-Type' => 'application/json; charset=UTF-8',
+        ]);
+    }
+
     // Hapus Data
     public function destroy($id)
     {

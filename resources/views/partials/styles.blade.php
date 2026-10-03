@@ -142,6 +142,7 @@
         padding: 16px; border-radius: 14px;
         background: var(--surface-2); border: 1px solid #e2e8f0;
     }
+    .status-inline-select { min-width: 172px; border-radius: 999px; font-size: .76rem; font-weight: 600; padding-top: .25rem; padding-bottom: .25rem; }
     .pagination-pelita .pagination { margin-bottom: 0; gap: 4px; }
     .pagination-pelita .page-link {
         border: none; border-radius: 9px; color: var(--brand-700);
