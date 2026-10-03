@@ -19,14 +19,14 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [WakafController::class, 'admin'])->name('index');
     Route::get('/laporan-pdf', [WakafController::class, 'laporanPdf'])->name('laporanPdf');
-    Route::get('/create', [WakafController::class, 'create'])->middleware('role:admin,operator')->name('create');
-    Route::post('/store', [WakafController::class, 'store'])->middleware('role:admin,operator')->name('store');
-    Route::get('/edit/{id}', [WakafController::class, 'edit'])->middleware('role:admin,operator')->name('edit');
-    Route::put('/update/{id}', [WakafController::class, 'update'])->middleware('role:admin,operator')->name('update');
-    Route::patch('/update-status/{id}', [WakafController::class, 'updateTindakLanjut'])->middleware('role:admin,operator')->name('updateStatus');
-    Route::delete('/delete/{id}', [WakafController::class, 'destroy'])->middleware('role:admin')->name('destroy');
-    
-    // Backup dan export hanya untuk admin/operator, hapus data hanya admin.
-    Route::get('/backup', [WakafController::class, 'backup'])->middleware('role:admin')->name('backup');
-    Route::get('/export-excel', [WakafController::class, 'exportExcel'])->middleware('role:admin,operator,viewer')->name('exportExcel');
+    Route::get('/create', [WakafController::class, 'create'])->name('create');
+    Route::post('/store', [WakafController::class, 'store'])->name('store');
+    Route::get('/edit/{id}', [WakafController::class, 'edit'])->name('edit');
+    Route::put('/update/{id}', [WakafController::class, 'update'])->name('update');
+    Route::patch('/update-status/{id}', [WakafController::class, 'updateTindakLanjut'])->name('updateStatus');
+    Route::delete('/delete/{id}', [WakafController::class, 'destroy'])->name('destroy');
+
+    // Backup data dan export
+    Route::get('/backup', [WakafController::class, 'backup'])->name('backup');
+    Route::get('/export-excel', [WakafController::class, 'exportExcel'])->name('exportExcel');
 });

@@ -254,25 +254,19 @@
                         <small class="text-muted">Kelola, cari, dan filter data aset dengan lebih cepat.</small>
                     </div>
                     <div class="d-flex flex-wrap gap-2">
-                        @if(in_array(Auth::user()->role ?? 'viewer', ['admin', 'operator']))
-                                                    <a href="{{ route('admin.laporanPdf') }}" class="btn btn-outline-brand flex-fill" target="_blank">
-                                                        <i class="fa-solid fa-file-pdf me-1"></i> Laporan PDF
-                                                    </a>
-                                                @endif
-                                                @if((Auth::user()->role ?? 'viewer') === 'admin')
-                                                    <a href="{{ route('admin.backup') }}" class="btn btn-outline-secondary flex-fill">
-                                                        <i class="fa-solid fa-database me-1"></i> Backup
-                                                    </a>
-                                                @endif
-                                                <a href="{{ route('admin.exportExcel') }}" class="btn btn-soft flex-fill">
-                                                    <i class="fa-solid fa-file-excel me-1"></i> Export Excel
-                                                </a>
-                        @if(in_array(Auth::user()->role ?? 'viewer', ['admin', 'operator']))
-                                                    <a href="{{ route('admin.create') }}" class="btn btn-brand flex-fill">
-                                                        <i class="fa-solid fa-plus me-1"></i> Tambah Aset
-                                                    </a>
-                                                @endif
-                    </div>
+                                            <a href="{{ route('admin.laporanPdf') }}" class="btn btn-outline-brand flex-fill" target="_blank">
+                                                <i class="fa-solid fa-file-pdf me-1"></i> Laporan PDF
+                                            </a>
+                                            <a href="{{ route('admin.backup') }}" class="btn btn-outline-secondary flex-fill">
+                                                <i class="fa-solid fa-database me-1"></i> Backup
+                                            </a>
+                                            <a href="{{ route('admin.exportExcel') }}" class="btn btn-soft flex-fill">
+                                                <i class="fa-solid fa-file-excel me-1"></i> Export Excel
+                                            </a>
+                                            <a href="{{ route('admin.create') }}" class="btn btn-brand flex-fill">
+                                                <i class="fa-solid fa-plus me-1"></i> Tambah Aset
+                                            </a>
+                                        </div>
                 </div>
 
                 <!-- Pencarian dan Filter Data -->
@@ -386,19 +380,15 @@
                                                     default => 'bg-secondary-subtle text-secondary border-secondary',
                                                 };
                                             @endphp
-                                            @if(in_array(Auth::user()->role ?? 'viewer', ['admin', 'operator']))
-                                                <form action="{{ route('admin.updateStatus', $item->id) }}" method="POST">
-                                                    @csrf
-                                                    @method('PATCH')
-                                                    <select name="status_tindak_lanjut" class="form-select form-select-sm status-inline-select {{ $warnaTindakLanjut }}" onchange="this.form.submit()" title="Ubah status tindak lanjut">
-                                                        @foreach(['Belum Ditindaklanjuti', 'Pengumpulan Berkas', 'Pengukuran', 'Proses Sertipikasi', 'Selesai'] as $statusTindakLanjut)
-                                                            <option value="{{ $statusTindakLanjut }}" @selected(($item->status_tindak_lanjut ?? 'Belum Ditindaklanjuti') === $statusTindakLanjut)>{{ $statusTindakLanjut }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </form>
-                                            @else
-                                                <span class="badge {{ $warnaTindakLanjut }} border px-2 py-1">{{ $item->status_tindak_lanjut ?? 'Belum Ditindaklanjuti' }}</span>
-                                            @endif
+                                            <form action="{{ route('admin.updateStatus', $item->id) }}" method="POST">
+                                                                                            @csrf
+                                                                                            @method('PATCH')
+                                                                                            <select name="status_tindak_lanjut" class="form-select form-select-sm status-inline-select {{ $warnaTindakLanjut }}" onchange="this.form.submit()" title="Ubah status tindak lanjut">
+                                                                                                @foreach(['Belum Ditindaklanjuti', 'Pengumpulan Berkas', 'Pengukuran', 'Proses Sertipikasi', 'Selesai'] as $statusTindakLanjut)
+                                                                                                    <option value="{{ $statusTindakLanjut }}" @selected(($item->status_tindak_lanjut ?? 'Belum Ditindaklanjuti') === $statusTindakLanjut)>{{ $statusTindakLanjut }}</option>
+                                                                                                @endforeach
+                                                                                            </select>
+                                                                                        </form>
                                         </td>
                                         <td class="text-center text-nowrap">
                                             @if($item->jenis_hak || $item->nomor_hak)
@@ -411,23 +401,19 @@
                                         </td>
                                         <td class="text-center fw-semibold">{{ number_format($item->luas_tanah) }}</td>
                                         <td class="text-center">
-                                            <div class="d-flex justify-content-center gap-1">
-                                                                                                @if(in_array(Auth::user()->role ?? 'viewer', ['admin', 'operator']))
-                                                                                                    <a href="{{ route('admin.edit', $item->id) }}" class="btn btn-warning btn-sm" title="Edit">
-                                                                                                        <i class="fa-solid fa-pen-to-square"></i>
-                                                                                                    </a>
-                                                                                                @endif
-                                                                                                @if((Auth::user()->role ?? 'viewer') === 'admin')
-                                                                                                    <form action="{{ route('admin.destroy', $item->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
-                                                                                                        @csrf
-                                                                                                        @method('DELETE')
-                                                                                                        <button class="btn btn-danger btn-sm" title="Hapus">
-                                                                                                            <i class="fa-solid fa-trash"></i>
-                                                                                                        </button>
-                                                                                                    </form>
-                                                                                                @endif
-                                            </div>
-                                        </td>
+                                                                                    <div class="d-flex justify-content-center gap-1">
+                                                                                        <a href="{{ route('admin.edit', $item->id) }}" class="btn btn-warning btn-sm" title="Edit">
+                                                                                            <i class="fa-solid fa-pen-to-square"></i>
+                                                                                        </a>
+                                                                                        <form action="{{ route('admin.destroy', $item->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
+                                                                                            @csrf
+                                                                                            @method('DELETE')
+                                                                                            <button class="btn btn-danger btn-sm" title="Hapus">
+                                                                                                <i class="fa-solid fa-trash"></i>
+                                                                                            </button>
+                                                                                        </form>
+                                                                                    </div>
+                                                                                </td>
                                     </tr>
                                 @empty
                                     <tr>
