@@ -50,11 +50,16 @@ class WakafController extends Controller
             $query->where('jenis_hak', $request->string('jenis_hak')->toString());
         }
 
+        if ($request->filled('tindak_lanjut')) {
+            $query->where('status_tindak_lanjut', $request->string('tindak_lanjut')->toString());
+        }
+
         $asetWakaf = $query->paginate(15)->withQueryString();
         $kecamatanList = $semuaAset->pluck('kecamatan')->filter()->unique()->sort()->values();
         $jenisHakList = $semuaAset->pluck('jenis_hak')->filter()->unique()->sort()->values();
+        $tindakLanjutList = $semuaAset->pluck('status_tindak_lanjut')->filter()->unique()->sort()->values();
 
-        return view('admin.index', compact('asetWakaf', 'semuaAset', 'kecamatanList', 'jenisHakList'));
+        return view('admin.index', compact('asetWakaf', 'semuaAset', 'kecamatanList', 'jenisHakList', 'tindakLanjutList'));
     }
 
     // Laporan resmi yang siap dicetak / disimpan sebagai PDF dari browser
@@ -81,6 +86,7 @@ class WakafController extends Controller
             'latitude'          => 'required|numeric',
             'longitude'         => 'required|numeric',
             'status_sertipikat' => 'required',
+            'status_tindak_lanjut' => 'required|string|in:Belum Ditindaklanjuti,Pengumpulan Berkas,Pengukuran,Proses Sertipikasi,Selesai',
             'jenis_hak'         => 'nullable|string',
             'nomor_hak'         => 'nullable|string',
             'luas_tanah'        => 'required|numeric',
@@ -93,6 +99,7 @@ class WakafController extends Controller
             'latitude',
             'longitude',
             'status_sertipikat',
+            'status_tindak_lanjut',
             'jenis_hak',
             'nomor_hak',
             'luas_tanah',
@@ -118,6 +125,7 @@ class WakafController extends Controller
             'latitude'          => 'required|numeric',
             'longitude'         => 'required|numeric',
             'status_sertipikat' => 'required',
+            'status_tindak_lanjut' => 'required|string|in:Belum Ditindaklanjuti,Pengumpulan Berkas,Pengukuran,Proses Sertipikasi,Selesai',
             'jenis_hak'         => 'nullable|string',
             'nomor_hak'         => 'nullable|string',
             'luas_tanah'        => 'required|numeric',
@@ -131,6 +139,7 @@ class WakafController extends Controller
             'latitude',
             'longitude',
             'status_sertipikat',
+            'status_tindak_lanjut',
             'jenis_hak',
             'nomor_hak',
             'luas_tanah',
@@ -175,6 +184,7 @@ class WakafController extends Controller
                 'Latitude',
                 'Longitude',
                 'Status Sertipikat',
+                'Status Tindak Lanjut',
                 'Jenis Hak',
                 'Nomor Hak',
                 'Luas Tanah (m2)',
@@ -190,6 +200,7 @@ class WakafController extends Controller
                     $aset->latitude,
                     $aset->longitude,
                     $aset->status_sertipikat,
+                    $aset->status_tindak_lanjut ?? 'Belum Ditindaklanjuti',
                     $aset->jenis_hak ?? '-',
                     $aset->nomor_hak ?? '-',
                     $aset->luas_tanah,

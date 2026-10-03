@@ -80,6 +80,16 @@
                         </select>
                     </div>
                     <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Status Tindak Lanjut</label>
+                        <select name="status_tindak_lanjut" class="form-select" required>
+                            <option value="Belum Ditindaklanjuti">Belum Ditindaklanjuti</option>
+                            <option value="Pengumpulan Berkas">Pengumpulan Berkas</option>
+                            <option value="Pengukuran">Pengukuran</option>
+                            <option value="Proses Sertipikasi">Proses Sertipikasi</option>
+                            <option value="Selesai">Selesai</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
                         <label class="form-label fw-semibold">Luas Tanah (m²)</label>
                         <input type="number" name="luas_tanah" class="form-control" placeholder="1500" required>
                     </div>

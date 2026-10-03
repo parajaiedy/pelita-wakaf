@@ -42,6 +42,8 @@
         $belum = $asets->where('status_sertipikat', 'Belum Bersertipikat')->count();
         $luas = $asets->sum('luas_tanah');
         $persentase = $total ? round(($sudah / $total) * 100, 1) : 0;
+        $tahapTindakLanjut = ['Belum Ditindaklanjuti', 'Pengumpulan Berkas', 'Pengukuran', 'Proses Sertipikasi', 'Selesai'];
+        $jumlahTindakLanjut = collect($tahapTindakLanjut)->mapWithKeys(fn ($tahap) => [$tahap => $asets->where('status_tindak_lanjut', $tahap)->count()]);
         $perKecamatan = $asets->groupBy('kecamatan');
     @endphp
 
@@ -70,6 +72,18 @@
         </section>
 
         <section class="mb-4">
+            <h3 class="h6 fw-bold mb-2"><i class="fa-solid fa-route me-2 text-success"></i>Rekapitulasi Tindak Lanjut</h3>
+            <table class="report-table" style="width:60%;">
+                <thead><tr><th>Tahap</th><th>Jumlah Aset</th></tr></thead>
+                <tbody>
+                @foreach($tahapTindakLanjut as $tahap)
+                    <tr><td>{{ $tahap }}</td><td>{{ $jumlahTindakLanjut[$tahap] }}</td></tr>
+                @endforeach
+                </tbody>
+            </table>
+        </section>
+
+        <section class="mb-4">
             <h3 class="h6 fw-bold mb-2"><i class="fa-solid fa-chart-column me-2 text-success"></i>Rekapitulasi per Kecamatan</h3>
             <table class="report-table" style="width:45%;">
                 <thead><tr><th>Kecamatan</th><th>Total Aset</th><th>Sudah Sertipikat</th><th>Belum Sertipikat</th></tr></thead>
@@ -84,12 +98,13 @@
         <section>
             <h3 class="h6 fw-bold mb-2"><i class="fa-solid fa-list me-2 text-success"></i>Daftar Aset Wakaf</h3>
             <table class="report-table">
-                <thead><tr><th>No</th><th>Nama Masjid / Tanah</th><th>Kecamatan</th><th>Kelurahan</th><th>Status Sertipikat</th><th>Jenis Hak</th><th>Nomor Hak</th><th>Luas (m²)</th></tr></thead>
+                <thead><tr><th>No</th><th>Nama Masjid / Tanah</th><th>Kecamatan</th><th>Kelurahan</th><th>Status Sertipikat</th><th>Tindak Lanjut</th><th>Jenis Hak</th><th>Nomor Hak</th><th>Luas (m²)</th></tr></thead>
                 <tbody>
                 @foreach($asets as $index => $aset)
                     <tr>
                         <td>{{ $index + 1 }}</td><td>{{ $aset->nama_masjid }}</td><td>{{ $aset->kecamatan }}</td><td>{{ $aset->kelurahan }}</td>
                         <td class="{{ $aset->status_sertipikat === 'Sudah Bersertipikat' ? 'status-ok' : 'status-no' }}">{{ $aset->status_sertipikat }}</td>
+                        <td>{{ $aset->status_tindak_lanjut ?? 'Belum Ditindaklanjuti' }}</td>
                         <td>{{ $aset->jenis_hak ?? '-' }}</td><td>{{ $aset->nomor_hak ?? '-' }}</td><td>{{ number_format($aset->luas_tanah) }}</td>
                     </tr>
                 @endforeach

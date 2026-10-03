@@ -76,6 +76,14 @@
                         </select>
                     </div>
                     <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Status Tindak Lanjut</label>
+                        <select name="status_tindak_lanjut" class="form-select" required>
+                            @foreach(['Belum Ditindaklanjuti', 'Pengumpulan Berkas', 'Pengukuran', 'Proses Sertipikasi', 'Selesai'] as $statusTindakLanjut)
+                                <option value="{{ $statusTindakLanjut }}" @selected(($aset->status_tindak_lanjut ?? 'Belum Ditindaklanjuti') === $statusTindakLanjut)>{{ $statusTindakLanjut }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
                         <label class="form-label fw-semibold">Luas Tanah (m²)</label>
                         <input type="number" name="luas_tanah" class="form-control" value="{{ $aset->luas_tanah }}" required>
                     </div>

@@ -53,6 +53,8 @@
             $sudahSertipikat = $semuaAset->where('status_sertipikat', 'Sudah Bersertipikat')->count();
             $belumSertipikat = $semuaAset->where('status_sertipikat', 'Belum Bersertipikat')->count();
             $persenSertipikat = $totalAset ? round(($sudahSertipikat / $totalAset) * 100, 1) : 0;
+            $tahapTindakLanjut = ['Belum Ditindaklanjuti', 'Pengumpulan Berkas', 'Pengukuran', 'Proses Sertipikasi', 'Selesai'];
+            $jumlahTindakLanjut = collect($tahapTindakLanjut)->mapWithKeys(fn ($tahap) => [$tahap => $semuaAset->where('status_tindak_lanjut', $tahap)->count()]);
 
             $countWakaf = 0;
             $countMilik = 0;
@@ -133,6 +135,38 @@
                 </div>
                 <div class="progress" style="height: 10px; border-radius: 999px; background: #e2e8f0;">
                     <div class="progress-bar bg-success" role="progressbar" style="width: {{ $persenSertipikat }}%" aria-valuenow="{{ $persenSertipikat }}" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ringkasan Tindak Lanjut Sertipikasi -->
+        <div class="card chart-card shadow-sm mb-4">
+            <div class="card-body p-3 p-md-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h6 class="fw-bold mb-1"><i class="fa-solid fa-route me-2 text-primary"></i>Tindak Lanjut Sertipikasi</h6>
+                        <small class="text-muted">Progress penanganan setiap aset wakaf.</small>
+                    </div>
+                    <i class="fa-solid fa-list-check text-primary fs-4"></i>
+                </div>
+                <div class="row g-2">
+                    @foreach($tahapTindakLanjut as $tahap)
+                        @php
+                            $jumlah = $jumlahTindakLanjut[$tahap];
+                            $warnaTahap = match($tahap) {
+                                'Selesai' => 'success',
+                                'Proses Sertipikasi', 'Pengukuran' => 'warning',
+                                'Pengumpulan Berkas' => 'info',
+                                default => 'secondary',
+                            };
+                        @endphp
+                        <div class="col-6 col-md">
+                            <div class="border rounded-3 p-2 h-100">
+                                <small class="text-muted d-block">{{ $tahap }}</small>
+                                <strong class="fs-5 text-{{ $warnaTahap }}">{{ $jumlah }}</strong> <small class="text-muted">aset</small>
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
             </div>
         </div>
@@ -268,9 +302,18 @@
                                 @endforeach
                             </select>
                         </div>
+                        <div class="col-6 col-lg-2">
+                            <label for="tindak_lanjut" class="form-label small mb-1">Tindak lanjut</label>
+                            <select name="tindak_lanjut" id="tindak_lanjut" class="form-select">
+                                <option value="">Semua progres</option>
+                                @foreach($tindakLanjutList as $statusTindakLanjut)
+                                    <option value="{{ $statusTindakLanjut }}" @selected(request('tindak_lanjut') === $statusTindakLanjut)>{{ $statusTindakLanjut }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                         <div class="col-6 col-lg-2 d-flex gap-2">
                             <button type="submit" class="btn btn-brand flex-grow-1"><i class="fa-solid fa-filter me-1"></i> Terapkan</button>
-                            @if(request()->hasAny(['q', 'kecamatan', 'status', 'jenis_hak']))
+                            @if(request()->hasAny(['q', 'kecamatan', 'status', 'jenis_hak', 'tindak_lanjut']))
                                 <a href="{{ route('admin.index') }}" class="btn btn-outline-secondary" title="Reset filter"><i class="fa-solid fa-rotate-left"></i></a>
                             @endif
                         </div>
@@ -280,7 +323,7 @@
                 <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-3">
                     <small class="text-muted">
                         Menampilkan <b>{{ $asetWakaf->firstItem() ?? 0 }}–{{ $asetWakaf->lastItem() ?? 0 }}</b> dari <b>{{ $asetWakaf->total() }}</b> aset
-                        @if(request()->hasAny(['q', 'kecamatan', 'status', 'jenis_hak'])) <span class="badge badge-soft-info ms-1">Hasil filter</span> @endif
+                        @if(request()->hasAny(['q', 'kecamatan', 'status', 'jenis_hak', 'tindak_lanjut'])) <span class="badge badge-soft-info ms-1">Hasil filter</span> @endif
                     </small>
                     <small class="text-muted">15 data per halaman</small>
                 </div>
@@ -295,7 +338,8 @@
                                     <th class="text-start">Wilayah</th>
                                     <th>Koordinat</th>
                                     <th>Status Sertipikat</th>
-                                    <th>Jenis & No. Hak</th>
+                                                                        <th>Tindak Lanjut</th>
+                                                                        <th>Jenis & No. Hak</th>
                                     <th>Luas (m²)</th>
                                     <th width="10%">Aksi</th>
                                 </tr>
@@ -325,6 +369,19 @@
                                             @endif
                                         </td>
                                         <td class="text-center text-nowrap">
+                                            @php
+                                                $warnaTindakLanjut = match($item->status_tindak_lanjut ?? 'Belum Ditindaklanjuti') {
+                                                    'Selesai' => 'bg-success-subtle text-success border-success',
+                                                    'Proses Sertipikasi', 'Pengukuran' => 'bg-warning-subtle text-warning-emphasis border-warning',
+                                                    'Pengumpulan Berkas' => 'bg-info-subtle text-info-emphasis border-info',
+                                                    default => 'bg-secondary-subtle text-secondary border-secondary',
+                                                };
+                                            @endphp
+                                            <span class="badge {{ $warnaTindakLanjut }} border px-2 py-1">
+                                                {{ $item->status_tindak_lanjut ?? 'Belum Ditindaklanjuti' }}
+                                            </span>
+                                        </td>
+                                        <td class="text-center text-nowrap">
                                             @if($item->jenis_hak || $item->nomor_hak)
                                                 <span class="badge bg-info-subtle text-info-emphasis border px-2 py-1">
                                                     {{ $item->jenis_hak ?? '-' }} No. {{ $item->nomor_hak ?? '-' }}
@@ -351,7 +408,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="8" class="text-center py-5 text-muted">
+                                        <td colspan="9" class="text-center py-5 text-muted">
                                             <i class="fa-solid fa-folder-open fa-3x mb-3 d-block opacity-50"></i>
                                             <h5 class="fw-semibold">Data Kosong</h5>
                                             <p class="mb-0">Belum ada data aset wakaf yang terdaftar.</p>
