@@ -147,14 +147,60 @@
             "🌙 Mode Gelap (Dark Mode)": darkModeMap
         };
 
-        // Layer Group untuk Batas Wilayah
+        // Layer batas wilayah: kecamatan (ringkas) dan kelurahan asli dari BIG.
         var batasWilayahLayer = L.layerGroup().addTo(map);
 
+        var warnaKecamatan = {
+            'Bacukiki': '#059669',
+            'Bacukiki Barat': '#db2777',
+            'Soreang': '#2563eb',
+            'Ujung': '#7c3aed'
+        };
+
+        // Tidak aktif saat halaman dibuka agar peta tetap ringan; aktifkan dari kontrol layer kanan atas.
+        var batasKelurahanLayer = L.geoJSON(null, {
+            style: function(feature) {
+                var kecamatan = feature.properties.WADMKC || '';
+                var warna = warnaKecamatan[kecamatan] || '#0d9488';
+                return {
+                    color: warna,
+                    weight: 1.2,
+                    opacity: 0.9,
+                    fillColor: warna,
+                    fillOpacity: 0.08
+                };
+            },
+            onEachFeature: function(feature, layer) {
+                var namaKelurahan = feature.properties.NAMOBJ || 'Kelurahan';
+                var kecamatan = feature.properties.WADMKC || '-';
+                layer.bindTooltip(namaKelurahan, { sticky: true, direction: 'top' });
+                layer.bindPopup(
+                    '<div class="popup-title">Kelurahan ' + namaKelurahan + '</div>' +
+                    '<div class="popup-info"><i class="fa-solid fa-map-location-dot me-1 text-secondary"></i>Kecamatan: <b>' + kecamatan + '</b></div>' +
+                    '<div class="popup-info"><i class="fa-solid fa-building-columns me-1 text-secondary"></i>Kota Parepare, Sulawesi Selatan</div>'
+                );
+            }
+        });
+
         var overlayMaps = {
-            "🗺️ Batas Kecamatan": batasWilayahLayer
+            "🗺️ Batas Kecamatan": batasWilayahLayer,
+            "🏘️ Batas Kelurahan (BIG)": batasKelurahanLayer
         };
 
         L.control.layers(baseMaps, overlayMaps, { position: 'topright' }).addTo(map);
+
+        // Muat 22 batas kelurahan resmi Kota Parepare dari file GeoJSON lokal.
+        fetch(@json(asset('batas-kelurahan-parepare.geojson')))
+            .then(function(response) {
+                if (!response.ok) throw new Error('File batas kelurahan tidak dapat dimuat');
+                return response.json();
+            })
+            .then(function(data) {
+                batasKelurahanLayer.addData(data);
+            })
+            .catch(function(error) {
+                console.warn('Batas kelurahan tidak dimuat:', error.message);
+            });
 
         // Data Spatial Batas Wilayah Presisi Kota Parepare
         var dataBatasParepare = {
