@@ -54,7 +54,7 @@ class WakafController extends Controller
             $query->where('status_tindak_lanjut', $request->string('tindak_lanjut')->toString());
         }
 
-        $asetWakaf = $query->paginate(15)->withQueryString();
+        $asetWakaf = $query->get();
         $kecamatanList = $semuaAset->pluck('kecamatan')->filter()->unique()->sort()->values();
         $jenisHakList = $semuaAset->pluck('jenis_hak')->filter()->unique()->sort()->values();
         $tindakLanjutList = $semuaAset->pluck('status_tindak_lanjut')->filter()->unique()->sort()->values();

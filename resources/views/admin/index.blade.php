@@ -323,12 +323,11 @@
                     </div>
                 </form>
 
-                <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-3">
+                <div class="d-flex align-items-center gap-2 mb-3">
                     <small class="text-muted">
-                        Menampilkan <b>{{ $asetWakaf->firstItem() ?? 0 }}–{{ $asetWakaf->lastItem() ?? 0 }}</b> dari <b>{{ $asetWakaf->total() }}</b> aset
+                        Total <b>{{ $asetWakaf->count() }}</b> aset
                         @if(request()->hasAny(['q', 'kecamatan', 'status', 'jenis_hak', 'tindak_lanjut'])) <span class="badge badge-soft-info ms-1">Hasil filter</span> @endif
                     </small>
-                    <small class="text-muted">15 data per halaman</small>
                 </div>
 
                 <div class="border rounded">
@@ -350,7 +349,7 @@
                             <tbody>
                                 @forelse($asetWakaf as $index => $item)
                                     <tr>
-                                        <td class="text-center fw-bold">{{ $asetWakaf->firstItem() + $index }}</td>
+                                        <td class="text-center fw-bold">{{ $index + 1 }}</td>
                                         <td class="text-start">
                                             <div class="fw-bold text-dark text-nowrap">{{ $item->nama_masjid }}</div>
                                         </td>
@@ -429,11 +428,6 @@
                     </div>
                 </div>
 
-                @if($asetWakaf->hasPages())
-                    <div class="d-flex justify-content-center mt-4 pagination-pelita">
-                        {{ $asetWakaf->onEachSide(1)->links() }}
-                    </div>
-                @endif
             </div>
         </div>
 
