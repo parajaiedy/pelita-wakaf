@@ -202,81 +202,41 @@
                 console.warn('Batas kelurahan tidak dimuat:', error.message);
             });
 
-        // Data Spatial Batas Wilayah Presisi Kota Parepare
-        var dataBatasParepare = {
-          "type": "FeatureCollection",
-          "features": [
-            {
-              "type": "Feature",
-              "properties": { "nama_kecamatan": "Soreang", "warna": "#2563eb" },
-              "geometry": {
-                "type": "Polygon",
-                "coordinates": [[
-                  [119.6210, -3.9650], [119.6380, -3.9650], [119.6550, -3.9720], 
-                  [119.6580, -3.9950], [119.6350, -3.9980], [119.6250, -3.9950], 
-                  [119.6200, -3.9820], [119.6170, -3.9720], [119.6210, -3.9650]
-                ]]
-              }
-            },
-            {
-              "type": "Feature",
-              "properties": { "nama_kecamatan": "Ujung", "warna": "#7c3aed" },
-              "geometry": {
-                "type": "Polygon",
-                "coordinates": [[
-                  [119.6200, -3.9980], [119.6350, -3.9980], [119.6500, -4.0020], 
-                  [119.6480, -4.0180], [119.6320, -4.0180], [119.6210, -4.0140], 
-                  [119.6180, -4.0060], [119.6200, -3.9980]
-                ]]
-              }
-            },
-            {
-              "type": "Feature",
-              "properties": { "nama_kecamatan": "Bacukiki Barat", "warna": "#db2777" },
-              "geometry": {
-                "type": "Polygon",
-                "coordinates": [[
-                  [119.6210, -4.0140], [119.6320, -4.0180], [119.6480, -4.0180], 
-                  [119.6520, -4.0350], [119.6450, -4.0520], [119.6280, -4.0500], 
-                  [119.6220, -4.0380], [119.6190, -4.0250], [119.6210, -4.0140]
-                ]]
-              }
-            },
-            {
-              "type": "Feature",
-              "properties": { "nama_kecamatan": "Bacukiki", "warna": "#059669" },
-              "geometry": {
-                "type": "Polygon",
-                "coordinates": [[
-                  [119.6380, -3.9650], [119.6750, -3.9680], [119.6950, -3.9850], 
-                  [119.6980, -4.0250], [119.6850, -4.0550], [119.6450, -4.0520], 
-                  [119.6520, -4.0350], [119.6480, -4.0180], [119.6500, -4.0020], 
-                  [119.6580, -3.9950], [119.6550, -3.9720], [119.6380, -3.9650]
-                ]]
-              }
-            }
-          ]
-        };
-
-        // Render Polygon ke Peta
-        L.geoJSON(dataBatasParepare, {
-            style: function(feature) {
-                return {
-                    color: feature.properties.warna,
-                    weight: 2,
-                    opacity: 0.8,
-                    fillColor: feature.properties.warna,
-                    fillOpacity: 0.25
-                };
-            },
-            onEachFeature: function(feature, layer) {
-                layer.bindTooltip("Kec. " + feature.properties.nama_kecamatan, {
-                    permanent: true,
-                    direction: 'center',
-                    className: 'fw-bold text-dark bg-white px-2 py-1 rounded shadow-sm border-0'
-                });
-            }
-        }).addTo(batasWilayahLayer);
+        // Muat 4 batas kecamatan resmi Kota Parepare dari BIG.
+        fetch(@json(asset('batas-kecamatan-parepare.geojson')))
+            .then(function(response) {
+                if (!response.ok) throw new Error('File batas kecamatan tidak dapat dimuat');
+                return response.json();
+            })
+            .then(function(data) {
+                L.geoJSON(data, {
+                    style: function(feature) {
+                        var warna = warnaKecamatan[feature.properties.NAMOBJ] || '#0d9488';
+                        return {
+                            color: warna,
+                            weight: 2,
+                            opacity: 0.9,
+                            fillColor: warna,
+                            fillOpacity: 0.18
+                        };
+                    },
+                    onEachFeature: function(feature, layer) {
+                        var namaKecamatan = feature.properties.NAMOBJ || 'Kecamatan';
+                        layer.bindTooltip('Kec. ' + namaKecamatan, {
+                            permanent: true,
+                            direction: 'center',
+                            className: 'fw-bold text-dark bg-white px-2 py-1 rounded shadow-sm border-0'
+                        });
+                        layer.bindPopup(
+                            '<div class="popup-title">Kecamatan ' + namaKecamatan + '</div>' +
+                            '<div class="popup-info"><i class="fa-solid fa-building-columns me-1 text-secondary"></i>Kota Parepare, Sulawesi Selatan</div>'
+                        );
+                    }
+                }).addTo(batasWilayahLayer);
+            })
+            .catch(function(error) {
+                console.warn('Batas kecamatan tidak dimuat:', error.message);
+            });
 
         // Load data dari Controller
         var dataMasjid = @json($asetWakaf);
