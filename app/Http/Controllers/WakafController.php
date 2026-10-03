@@ -22,11 +22,39 @@ class WakafController extends Controller
         return view('peta_publik', compact('asets'));
     }
 
-    // Halaman Tabel Admin
-    public function admin()
+    // Halaman Tabel Admin: statistik lengkap + daftar aset yang dapat dicari/difilter
+    public function admin(Request $request)
     {
-        $asetWakaf = AsetWakaf::all();
-        return view('admin.index', compact('asetWakaf'));
+        $semuaAset = AsetWakaf::orderBy('nama_masjid')->get();
+
+        $query = AsetWakaf::query()->orderBy('nama_masjid');
+
+        if ($request->filled('q')) {
+            $keyword = trim($request->string('q')->toString());
+            $query->where(function ($builder) use ($keyword) {
+                $builder->where('nama_masjid', 'like', "%{$keyword}%")
+                    ->orWhere('kelurahan', 'like', "%{$keyword}%")
+                    ->orWhere('nomor_hak', 'like', "%{$keyword}%");
+            });
+        }
+
+        if ($request->filled('kecamatan')) {
+            $query->where('kecamatan', $request->string('kecamatan')->toString());
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status_sertipikat', $request->string('status')->toString());
+        }
+
+        if ($request->filled('jenis_hak')) {
+            $query->where('jenis_hak', $request->string('jenis_hak')->toString());
+        }
+
+        $asetWakaf = $query->paginate(15)->withQueryString();
+        $kecamatanList = $semuaAset->pluck('kecamatan')->filter()->unique()->sort()->values();
+        $jenisHakList = $semuaAset->pluck('jenis_hak')->filter()->unique()->sort()->values();
+
+        return view('admin.index', compact('asetWakaf', 'semuaAset', 'kecamatanList', 'jenisHakList'));
     }
 
     // Halaman Form Tambah Data

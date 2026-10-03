@@ -137,6 +137,22 @@
     .table-modern tbody tr:nth-child(even) { background: var(--surface-2); }
     .table-modern tbody tr:nth-child(even):hover { background: var(--brand-50); }
 
+    /* ---------- Filter & Pagination Admin ---------- */
+    .filter-panel {
+        padding: 16px; border-radius: 14px;
+        background: var(--surface-2); border: 1px solid #e2e8f0;
+    }
+    .pagination-pelita .pagination { margin-bottom: 0; gap: 4px; }
+    .pagination-pelita .page-link {
+        border: none; border-radius: 9px; color: var(--brand-700);
+        min-width: 38px; text-align: center; box-shadow: var(--shadow-sm);
+    }
+    .pagination-pelita .page-item.active .page-link {
+        background: linear-gradient(135deg, var(--brand-700), var(--brand-500));
+        color: #fff;
+    }
+    .pagination-pelita .page-item.disabled .page-link { color: #94a3b8; background: #f8fafc; }
+
     /* ---------- Badge ---------- */
     .badge { font-weight: 600; border-radius: 999px; }
     .badge-soft-success { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }

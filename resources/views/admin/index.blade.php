@@ -48,13 +48,18 @@
         @endif
 
         @php
-            // Logika Perhitungan Cerdas Jenis Hak
+            // Statistik selalu memakai seluruh data, bukan hanya 15 baris halaman ini.
+            $totalAset = $semuaAset->count();
+            $sudahSertipikat = $semuaAset->where('status_sertipikat', 'Sudah Bersertipikat')->count();
+            $belumSertipikat = $semuaAset->where('status_sertipikat', 'Belum Bersertipikat')->count();
+            $persenSertipikat = $totalAset ? round(($sudahSertipikat / $totalAset) * 100, 1) : 0;
+
             $countWakaf = 0;
             $countMilik = 0;
             $countHGB = 0;
             $countPakai = 0;
 
-            foreach($asetWakaf as $item) {
+            foreach($semuaAset as $item) {
                 $hak = strtolower($item->jenis_hak ?? '');
                 if (str_contains($hak, 'wakaf')) {
                     $countWakaf++;
@@ -75,7 +80,7 @@
                     <div class="card-body p-3 d-flex justify-content-between align-items-center">
                         <div>
                             <h6 class="text-white-50 small mb-1">Total Aset Wakaf</h6>
-                            <h3 class="fw-bold mb-0">{{ $asetWakaf->count() }}</h3>
+                            <h3 class="fw-bold mb-0">{{ $totalAset }}</h3>
                         </div>
                         <i class="fa-solid fa-mosque fa-2x opacity-50 d-none d-sm-block"></i>
                     </div>
@@ -86,7 +91,7 @@
                     <div class="card-body p-3 d-flex justify-content-between align-items-center">
                         <div>
                             <h6 class="text-white-50 small mb-1">Sudah Sertipikat</h6>
-                            <h3 class="fw-bold mb-0">{{ $asetWakaf->where('status_sertipikat', 'Sudah Bersertipikat')->count() }}</h3>
+                            <h3 class="fw-bold mb-0">{{ $sudahSertipikat }}</h3>
                         </div>
                         <i class="fa-solid fa-certificate fa-2x opacity-50 d-none d-sm-block"></i>
                     </div>
@@ -97,7 +102,7 @@
                     <div class="card-body p-3 d-flex justify-content-between align-items-center">
                         <div>
                             <h6 class="text-white-50 small mb-1">Belum Sertipikat</h6>
-                            <h3 class="fw-bold mb-0">{{ $asetWakaf->where('status_sertipikat', 'Belum Bersertipikat')->count() }}</h3>
+                            <h3 class="fw-bold mb-0">{{ $belumSertipikat }}</h3>
                         </div>
                         <i class="fa-solid fa-file-circle-exclamation fa-2x opacity-50 d-none d-sm-block"></i>
                     </div>
@@ -108,10 +113,26 @@
                     <div class="card-body p-3 d-flex justify-content-between align-items-center">
                         <div>
                             <h6 class="text-white-50 small mb-1">Total Luas (m²)</h6>
-                            <h3 class="fw-bold mb-0">{{ number_format($asetWakaf->sum('luas_tanah')) }}</h3>
+                            <h3 class="fw-bold mb-0">{{ number_format($semuaAset->sum('luas_tanah')) }}</h3>
                         </div>
                         <i class="fa-solid fa-ruler-combined fa-2x opacity-50 d-none d-sm-block"></i>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progres Capaian Sertipikasi -->
+        <div class="card chart-card shadow-sm mb-4">
+            <div class="card-body p-3 p-md-4">
+                <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-2">
+                    <div>
+                        <h6 class="fw-bold mb-1"><i class="fa-solid fa-bullseye me-2 text-success"></i>Capaian Sertipikasi</h6>
+                        <small class="text-muted">{{ $sudahSertipikat }} dari {{ $totalAset }} aset wakaf sudah bersertipikat.</small>
+                    </div>
+                    <span class="badge bg-success px-3 py-2 fs-6">{{ number_format($persenSertipikat, 1, ',', '.') }}%</span>
+                </div>
+                <div class="progress" style="height: 10px; border-radius: 999px; background: #e2e8f0;">
+                    <div class="progress-bar bg-success" role="progressbar" style="width: {{ $persenSertipikat }}%" aria-valuenow="{{ $persenSertipikat }}" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
             </div>
         </div>
@@ -194,15 +215,71 @@
         <div class="card shadow-sm border-0">
             <div class="card-body p-3 p-md-4">
                 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
-                    <h4 class="fw-bold text-dark mb-0">Daftar Aset Wakaf Parepare</h4>
+                    <div>
+                        <h4 class="fw-bold text-dark mb-1">Daftar Aset Wakaf Parepare</h4>
+                        <small class="text-muted">Kelola, cari, dan filter data aset dengan lebih cepat.</small>
+                    </div>
                     <div class="d-flex flex-wrap gap-2">
                         <a href="{{ route('admin.exportExcel') }}" class="btn btn-soft flex-fill">
-                                                    <i class="fa-solid fa-file-excel me-1"></i> Export Excel
-                                                </a>
-                                                <a href="{{ route('admin.create') }}" class="btn btn-brand flex-fill">
-                                                    <i class="fa-solid fa-plus me-1"></i> Tambah Aset
-                                                </a>
+                            <i class="fa-solid fa-file-excel me-1"></i> Export Excel
+                        </a>
+                        <a href="{{ route('admin.create') }}" class="btn btn-brand flex-fill">
+                            <i class="fa-solid fa-plus me-1"></i> Tambah Aset
+                        </a>
                     </div>
+                </div>
+
+                <!-- Pencarian dan Filter Data -->
+                <form method="GET" action="{{ route('admin.index') }}" class="filter-panel mb-4">
+                    <div class="row g-2 align-items-end">
+                        <div class="col-12 col-lg-4">
+                            <label for="q" class="form-label small mb-1">Cari aset</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa-solid fa-magnifying-glass"></i></span>
+                                <input type="search" name="q" id="q" class="form-control" value="{{ request('q') }}" placeholder="Nama masjid, kelurahan, atau nomor hak">
+                            </div>
+                        </div>
+                        <div class="col-6 col-lg-2">
+                            <label for="kecamatan" class="form-label small mb-1">Kecamatan</label>
+                            <select name="kecamatan" id="kecamatan" class="form-select">
+                                <option value="">Semua kecamatan</option>
+                                @foreach($kecamatanList as $kecamatan)
+                                    <option value="{{ $kecamatan }}" @selected(request('kecamatan') === $kecamatan)>{{ $kecamatan }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-6 col-lg-2">
+                            <label for="status" class="form-label small mb-1">Sertipikat</label>
+                            <select name="status" id="status" class="form-select">
+                                <option value="">Semua status</option>
+                                <option value="Sudah Bersertipikat" @selected(request('status') === 'Sudah Bersertipikat')>Sudah</option>
+                                <option value="Belum Bersertipikat" @selected(request('status') === 'Belum Bersertipikat')>Belum</option>
+                            </select>
+                        </div>
+                        <div class="col-6 col-lg-2">
+                            <label for="jenis_hak" class="form-label small mb-1">Jenis hak</label>
+                            <select name="jenis_hak" id="jenis_hak" class="form-select">
+                                <option value="">Semua jenis hak</option>
+                                @foreach($jenisHakList as $jenisHak)
+                                    <option value="{{ $jenisHak }}" @selected(request('jenis_hak') === $jenisHak)>{{ $jenisHak }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-6 col-lg-2 d-flex gap-2">
+                            <button type="submit" class="btn btn-brand flex-grow-1"><i class="fa-solid fa-filter me-1"></i> Terapkan</button>
+                            @if(request()->hasAny(['q', 'kecamatan', 'status', 'jenis_hak']))
+                                <a href="{{ route('admin.index') }}" class="btn btn-outline-secondary" title="Reset filter"><i class="fa-solid fa-rotate-left"></i></a>
+                            @endif
+                        </div>
+                    </div>
+                </form>
+
+                <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-3">
+                    <small class="text-muted">
+                        Menampilkan <b>{{ $asetWakaf->firstItem() ?? 0 }}–{{ $asetWakaf->lastItem() ?? 0 }}</b> dari <b>{{ $asetWakaf->total() }}</b> aset
+                        @if(request()->hasAny(['q', 'kecamatan', 'status', 'jenis_hak'])) <span class="badge badge-soft-info ms-1">Hasil filter</span> @endif
+                    </small>
+                    <small class="text-muted">15 data per halaman</small>
                 </div>
 
                 <div class="border rounded">
@@ -223,7 +300,7 @@
                             <tbody>
                                 @forelse($asetWakaf as $index => $item)
                                     <tr>
-                                        <td class="text-center fw-bold">{{ $index + 1 }}</td>
+                                        <td class="text-center fw-bold">{{ $asetWakaf->firstItem() + $index }}</td>
                                         <td class="text-start">
                                             <div class="fw-bold text-dark text-nowrap">{{ $item->nama_masjid }}</div>
                                         </td>
@@ -282,7 +359,12 @@
                         </table>
                     </div>
                 </div>
-                
+
+                @if($asetWakaf->hasPages())
+                    <div class="d-flex justify-content-center mt-4 pagination-pelita">
+                        {{ $asetWakaf->onEachSide(1)->links() }}
+                    </div>
+                @endif
             </div>
         </div>
 
@@ -295,8 +377,8 @@
         Chart.defaults.color = '#475569';
 
         // 1. DATA DOUGHNUT CHART (STATUS SERTIPIKAT)
-        const countSudah = {{ $asetWakaf->where('status_sertipikat', 'Sudah Bersertipikat')->count() }};
-        const countBelum = {{ $asetWakaf->where('status_sertipikat', 'Belum Bersertipikat')->count() }};
+        const countSudah = {{ $sudahSertipikat }};
+                const countBelum = {{ $belumSertipikat }};
 
         const ctxStatus = document.getElementById('statusChart').getContext('2d');
         new Chart(ctxStatus, {
@@ -334,7 +416,7 @@
 
         // 2. DATA BAR CHART (SEBARAN KECAMATAN)
         @php
-            $kecamatanData = $asetWakaf->groupBy('kecamatan')->map->count();
+            $kecamatanData = $semuaAset->groupBy('kecamatan')->map->count();
             $kecamatanLabels = $kecamatanData->keys();
             $kecamatanValues = $kecamatanData->values();
         @endphp
