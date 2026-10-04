@@ -270,6 +270,11 @@
                 belumSertipikat++;
             }
 
+            // Aset tanpa koordinat (0,0) tetap dihitung di statistik, tapi tidak digambar di peta.
+            if (!parseFloat(item.latitude) && !parseFloat(item.longitude)) {
+                return;
+            }
+
             // 2. Logika Vektor Warna-Warni Berdasarkan Hak (Kebal Spasi)
             var pinColor = '#dc3545'; // Default: Merah (Kosong / Belum Sertipikat)
             var hak = (item.jenis_hak || '').toLowerCase();

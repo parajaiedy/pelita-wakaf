@@ -397,8 +397,12 @@
                                             <small class="text-muted"><i class="fa-solid fa-location-dot me-1"></i> Kec. {{ $item->kecamatan }} / Kel. {{ $item->kelurahan }}</small>
                                         </td>
                                         <td class="text-center text-nowrap">
-                                            <span class="badge bg-light text-dark border"><i class="fa-regular fa-compass me-1"></i> {{ $item->latitude }}, {{ $item->longitude }}</span>
-                                        </td>
+                                                                                    @if((float) $item->latitude == 0 && (float) $item->longitude == 0)
+                                                                                        <span class="text-muted small" title="Belum ada koordinat">— belum terpetakan</span>
+                                                                                    @else
+                                                                                        <span class="badge bg-light text-dark border"><i class="fa-regular fa-compass me-1"></i> {{ $item->latitude }}, {{ $item->longitude }}</span>
+                                                                                    @endif
+                                                                                </td>
                                         <td class="text-center text-nowrap">
                                             @if($item->status_sertipikat == 'Sudah Bersertipikat')
                                                 <span class="badge bg-success-subtle text-success border border-success px-3 py-1 rounded-pill">
