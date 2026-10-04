@@ -24,8 +24,9 @@ RUN composer install --no-dev --optimize-autoloader
 
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-COPY config/apache-render.conf /etc/apache2/ports.conf
-COPY config/apache-render.conf /etc/apache2/sites-available/000-default.conf
+# ports.conf hanya berisi Listen; vhost hanya berisi VirtualHost (hindari duplikat Listen)
+COPY config/apache-ports.conf /etc/apache2/ports.conf
+COPY config/apache-vhost.conf /etc/apache2/sites-available/000-default.conf
 
 EXPOSE 80
 
