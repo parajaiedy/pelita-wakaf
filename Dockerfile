@@ -27,6 +27,9 @@ ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/000-default.conf
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf
 
+# Ensure Apache listens on IPv4 0.0.0.0:80
+RUN echo "Listen 0.0.0.0:80" > /etc/apache2/ports.conf
+
 EXPOSE 80
 
 CMD sh -c "cd /var/www/html && php artisan migrate --force || true && exec apache2-foreground"
