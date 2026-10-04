@@ -7,8 +7,7 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     git \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
+    curl
 
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
@@ -28,9 +27,6 @@ ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/000-default.conf
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf
 
-# Force Apache to listen only on IPv4 0.0.0.0:80 for Render health check
-RUN printf 'Listen 0.0.0.0:80\n<IfModule ssl_module>\n    Listen 443\n</IfModule>\n<IfModule mod_gnutls.c>\n    Listen 443\n</IfModule>\n' > /etc/apache2/ports.conf
-
 EXPOSE 80
 
-CMD sh -c "cd /var/www/html && php artisan migrate --force || true && exec apache2-foreground"
+CMD sh -c "php artisan migrate --force && exec apache2-foreground"
