@@ -24,4 +24,5 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 
 EXPOSE 80
 
-CMD sh -c "cd /var/www/html && php artisan migrate --force || true && php -S 0.0.0.0:80 -t public"
+# Render menyediakan port lewat $PORT; fallback ke 80 jika kosong.
+CMD sh -c "cd /var/www/html && php artisan migrate --force || true; PORT=${PORT:-80}; echo \"Starting PHP server on 0.0.0.0:$PORT\"; php -S 0.0.0.0:$PORT -t public"
