@@ -29,4 +29,4 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.
 
 EXPOSE 80
 
-CMD ["apache2-foreground"]
+CMD sh -c "cd /var/www/html && php artisan migrate --force && exec apache2-foreground"
