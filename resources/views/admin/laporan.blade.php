@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laporan Aset Wakaf - Parepare</title>
+    <title>Laporan Aset Pemerintah - Parepare</title>
     @include('partials.styles')
     <style>
         body { background: #fff; color: #111827; }
@@ -58,8 +58,8 @@
         <header class="report-header d-flex align-items-center gap-3">
             <span class="report-logo"><i class="fa-solid fa-mosque"></i></span>
             <div>
-                <h1 class="h3 fw-bold mb-1">LAPORAN ASET WAKAF</h1>
-                <h2 class="h6 text-secondary mb-1">Kota Parepare — Pelita Wakaf</h2>
+                <h1 class="h3 fw-bold mb-1">LAPORAN ASET PEMERINTAH</h1>
+                <h2 class="h6 text-secondary mb-1">Kota Parepare — Pelita Aset Parepare</h2>
                 <div class="report-meta">BPN Kota Parepare | Dicetak: {{ now()->translatedFormat('d F Y, H:i') }}</div>
             </div>
         </header>
@@ -96,7 +96,7 @@
         </section>
 
         <section>
-            <h3 class="h6 fw-bold mb-2"><i class="fa-solid fa-list me-2 text-success"></i>Daftar Aset Wakaf</h3>
+            <h3 class="h6 fw-bold mb-2"><i class="fa-solid fa-list me-2 text-success"></i>Daftar Aset Pemerintah</h3>
             <table class="report-table">
                 <thead><tr><th>No</th><th>Nama Masjid / Tanah</th><th>Kecamatan</th><th>Kelurahan</th><th>Status Sertipikat</th><th>Tindak Lanjut</th><th>Jenis Hak</th><th>Nomor Hak</th><th>Luas (m²)</th></tr></thead>
                 <tbody>
@@ -113,7 +113,7 @@
         </section>
 
         <footer class="report-footer d-flex justify-content-between">
-            <span>Pelita Wakaf — BPN Kota Parepare</span>
+            <span>Pelita Aset Parepare — BPN Kota Parepare</span>
             <span>Dokumen dihasilkan oleh sistem | {{ now()->format('Y') }}</span>
         </footer>
     </main>

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <!-- Meta viewport ini SANGAT PENTING agar tampilan bagus di HP -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Pelita Wakaf</title>
+    <title>Login - Pelita Aset Parepare</title>
     
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -23,8 +23,8 @@
             <div class="card login-card border-0">
                 <div class="login-header">
                     <i class="fa-solid fa-map-location-dot login-icon"></i>
-                    <h3 class="fw-bold text-dark mb-1">Pelita Wakaf</h3>
-                    <p class="text-muted small">Aplikasi Pemetaan Aset Wakaf Parepare</p>
+                    <h3 class="fw-bold text-dark mb-1">Pelita Aset Parepare</h3>
+                    <p class="text-muted small">Aplikasi Pemetaan Aset Pemerintah Parepare</p>
                 </div>
                 
                 <div class="card-body p-4 p-md-5 pt-0">

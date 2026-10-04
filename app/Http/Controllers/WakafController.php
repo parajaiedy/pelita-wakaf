@@ -105,7 +105,7 @@ class WakafController extends Controller
             'luas_tanah',
         ]));
 
-        return redirect()->route('admin.index')->with('success', 'Data aset wakaf berhasil ditambahkan!');
+        return redirect()->route('admin.index')->with('success', 'Data aset berhasil ditambahkan!');
     }
 
     // Halaman Form Edit Data
@@ -145,7 +145,7 @@ class WakafController extends Controller
             'luas_tanah',
         ]));
 
-        return redirect()->route('admin.index')->with('success', 'Data aset wakaf berhasil diperbarui!');
+        return redirect()->route('admin.index')->with('success', 'Data aset berhasil diperbarui!');
     }
 
     // Ubah status tindak lanjut langsung dari tabel admin.
@@ -164,7 +164,7 @@ class WakafController extends Controller
     public function backup()
     {
         $payload = [
-            'aplikasi' => 'Pelita Wakaf - BPN Kota Parepare',
+            'aplikasi' => 'Pelita Aset Parepare - BPN Kota Parepare',
             'dibuat_pada' => now()->toIso8601String(),
             'jumlah_data' => AsetWakaf::count(),
             'aset' => AsetWakaf::orderBy('id')->get()->toArray(),
@@ -172,7 +172,7 @@ class WakafController extends Controller
 
         return response()->streamDownload(function () use ($payload) {
             echo json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-        }, 'backup-pelita-wakaf-' . now()->format('Ymd-His') . '.json', [
+        }, 'backup-pelita-aset-' . now()->format('Ymd-His') . '.json', [
             'Content-Type' => 'application/json; charset=UTF-8',
         ]);
     }
@@ -183,7 +183,7 @@ class WakafController extends Controller
         $aset = AsetWakaf::findOrFail($id);
         $aset->delete();
 
-        return redirect()->route('admin.index')->with('success', 'Data aset wakaf berhasil dihapus!');
+        return redirect()->route('admin.index')->with('success', 'Data aset berhasil dihapus!');
     }
 
     // Export Data ke Excel (CSV + BOM UTF-8 agar karakter Indonesia terbaca rapi di Excel)
@@ -191,7 +191,7 @@ class WakafController extends Controller
     {
         $asets = AsetWakaf::orderBy('kecamatan')->orderBy('kelurahan')->get();
 
-        $filename = 'aset-wakaf-parepare-' . date('Ymd-His') . '.csv';
+        $filename = 'aset-parepare-' . date('Ymd-His') . '.csv';
 
         $headers = [
             'Content-Type'        => 'text/csv; charset=UTF-8',

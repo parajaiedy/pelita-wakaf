@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Peta Pelita Wakaf - Kota Parepare</title>
+    <title>Peta Pelita Aset Parepare - Kota Parepare</title>
     
     <!-- Leaflet CSS & FontAwesome Icons -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -56,7 +56,7 @@
         <div class="d-flex align-items-center gap-2 mb-3">
             <span class="navbar-brand-mark"><i class="fa-solid fa-mosque"></i></span>
             <div>
-                <div class="sidebar-brand">Pelita Wakaf</div>
+                <div class="sidebar-brand">Pelita Aset Parepare</div>
                 <small class="text-muted">BPN Kota Parepare</small>
             </div>
         </div>
@@ -76,7 +76,7 @@
 
         <div class="stat-card">
             <div>
-                <small class="text-muted d-block">Total Aset Wakaf</small>
+                <small class="text-muted d-block">Total Aset</small>
                 <span class="fw-bold fs-5" id="total-aset">0</span>
             </div>
             <span class="stat-icon-wrap"><i class="fa-solid fa-map-location-dot"></i></span>

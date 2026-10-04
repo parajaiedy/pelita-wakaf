@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Admin - Pelita Wakaf Parepare</title>
+    <title>Dashboard Admin - Pelita Aset Parepare</title>
     <!-- Bootstrap 5 CSS, FontAwesome Icons & Chart.js -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -18,7 +18,7 @@
         <div class="container-fluid flex-wrap gap-2">
             <a class="navbar-brand text-white d-flex align-items-center gap-2" href="#">
                             <span class="navbar-brand-mark"><i class="fa-solid fa-mosque"></i></span>
-                            <span>Pelita Wakaf Parepare</span>
+                            <span>Pelita Aset Parepare</span>
                         </a>
             <div class="d-flex align-items-center gap-2 flex-wrap">
                 <span class="badge bg-secondary px-3 py-2 rounded-pill">
@@ -81,7 +81,7 @@
                 <div class="card card-stat bg-primary text-white shadow-sm h-100">
                     <div class="card-body p-3 d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="text-white-50 small mb-1">Total Aset Wakaf</h6>
+                            <h6 class="text-white-50 small mb-1">Total Aset</h6>
                             <h3 class="fw-bold mb-0">{{ $totalAset }}</h3>
                         </div>
                         <i class="fa-solid fa-mosque fa-2x opacity-50 d-none d-sm-block"></i>
@@ -129,7 +129,7 @@
                 <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-2">
                     <div>
                         <h6 class="fw-bold mb-1"><i class="fa-solid fa-bullseye me-2 text-success"></i>Capaian Sertipikasi</h6>
-                        <small class="text-muted">{{ $sudahSertipikat }} dari {{ $totalAset }} aset wakaf sudah bersertipikat.</small>
+                        <small class="text-muted">{{ $sudahSertipikat }} dari {{ $totalAset }} aset sudah bersertipikat.</small>
                     </div>
                     <span class="badge bg-success px-3 py-2 fs-6">{{ number_format($persenSertipikat, 1, ',', '.') }}%</span>
                 </div>
@@ -145,7 +145,7 @@
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <div>
                         <h6 class="fw-bold mb-1"><i class="fa-solid fa-route me-2 text-primary"></i>Tindak Lanjut Sertipikasi</h6>
-                        <small class="text-muted">Progress penanganan setiap aset wakaf.</small>
+                        <small class="text-muted">Progress penanganan setiap aset.</small>
                     </div>
                     <i class="fa-solid fa-list-check text-primary fs-4"></i>
                 </div>
@@ -250,7 +250,7 @@
             <div class="card-body p-3 p-md-4">
                 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
                     <div>
-                        <h4 class="fw-bold text-dark mb-1">Daftar Aset Wakaf Parepare</h4>
+                        <h4 class="fw-bold text-dark mb-1">Daftar Aset Parepare</h4>
                         <small class="text-muted">Kelola, cari, dan filter data aset dengan lebih cepat.</small>
                     </div>
                     <div class="d-flex flex-wrap gap-2">
@@ -419,7 +419,7 @@
                                         <td colspan="9" class="text-center py-5 text-muted">
                                             <i class="fa-solid fa-folder-open fa-3x mb-3 d-block opacity-50"></i>
                                             <h5 class="fw-semibold">Data Kosong</h5>
-                                            <p class="mb-0">Belum ada data aset wakaf yang terdaftar.</p>
+                                            <p class="mb-0">Belum ada data aset yang terdaftar.</p>
                                         </td>
                                     </tr>
                                 @endforelse
@@ -502,7 +502,7 @@
             data: {
                 labels: kecLabels,
                 datasets: [{
-                    label: 'Jumlah Aset Wakaf',
+                    label: 'Jumlah Aset',
                     data: kecValues,
                     backgroundColor: bgColors,
                     borderRadius: 8, // Ujung batang melengkung elegan

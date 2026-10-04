@@ -1,5 +1,5 @@
 <!-- ============================================================
-     PELITA WAKAF — Sistem Desain Terpadu (shared across all views)
+     PELITA ASET PAREPARE — Sistem Desain Terpadu (shared across all views)
      Satu sumber gaya untuk semua halaman agar tampilan konsisten.
      ============================================================ -->
 <link rel="preconnect" href="https://fonts.googleapis.com">

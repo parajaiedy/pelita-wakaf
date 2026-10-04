@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Edit Data Aset Wakaf</title>
+    <title>Edit Data Aset</title>
     <!-- Bootstrap 5 CSS, FontAwesome, Leaflet CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -15,7 +15,7 @@
 <div class="container mt-4 mb-5" style="max-width: 750px;">
     <div class="card shadow-sm border-0">
         <div class="card-header card-header-brand py-3">
-            <h5 class="mb-0 fw-bold"><i class="fa-solid fa-pen-to-square me-2"></i>Edit Data Aset Wakaf</h5>
+            <h5 class="mb-0 fw-bold"><i class="fa-solid fa-pen-to-square me-2"></i>Edit Data Aset</h5>
         </div>
         <div class="card-body p-4">
             <form action="{{ route('admin.update', $aset->id) }}" method="POST">
