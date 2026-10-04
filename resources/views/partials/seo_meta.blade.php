@@ -41,12 +41,12 @@
 <!-- Structured Data: WebSite -->
 <script type="application/ld+json">
 {
-  "@context": "https://schema.org",
-  "@type": "WebSite",
+  "@@context": "https://schema.org",
+  "@@type": "WebSite",
   "name": "Pelita Aset Parepare",
   "url": "{{ url('/') }}",
   "potentialAction": {
-    "@type": "SearchAction",
+    "@@type": "SearchAction",
     "target": "{{ url('/') }}/peta?q={search_term_string}",
     "query-input": "required name=search_term_string"
   }
@@ -55,14 +55,14 @@
 <!-- Structured Data: Government Organization -->
 <script type="application/ld+json">
 {
-  "@context": "https://schema.org",
-  "@type": "GovernmentOrganization",
+  "@@context": "https://schema.org",
+  "@@type": "GovernmentOrganization",
   "name": "Kantor Pertanahan Kota Parepare",
   "url": "{{ url('/') }}",
   "logo": "{{ $logoUrl }}",
   "description": "Portal geospasial aset wakaf dan aset pemerintah Kota Parepare",
   "address": {
-    "@type": "PostalAddress",
+    "@@type": "PostalAddress",
     "addressLocality": "Parepare",
     "addressRegion": "Sulawesi Selatan",
     "addressCountry": "ID"
