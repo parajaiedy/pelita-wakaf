@@ -27,6 +27,14 @@
                     <input type="text" name="nama_masjid" class="form-control" value="{{ $aset->nama_masjid }}" required>
                 </div>
 
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Kategori Aset</label>
+                    <select name="kategori" class="form-select" required>
+                        <option value="Wakaf" @selected(($aset->kategori ?? 'Wakaf') === 'Wakaf')>Wakaf</option>
+                        <option value="Aset Pemerintah" @selected(($aset->kategori ?? 'Wakaf') === 'Aset Pemerintah')>Aset Pemerintah</option>
+                    </select>
+                </div>
+
                 <div class="row">
                    <div class="col-md-6 mb-3">
                         <label for="kecamatan" class="form-label fw-semibold">Kecamatan</label>

@@ -54,6 +54,10 @@ class WakafController extends Controller
             $query->where('status_tindak_lanjut', $request->string('tindak_lanjut')->toString());
         }
 
+        if ($request->filled('kategori')) {
+            $query->where('kategori', $request->string('kategori')->toString());
+        }
+
         $asetWakaf = $query->get();
         $kecamatanList = $semuaAset->pluck('kecamatan')->filter()->unique()->sort()->values();
         $jenisHakList = $semuaAset->pluck('jenis_hak')->filter()->unique()->sort()->values();
@@ -86,6 +90,7 @@ class WakafController extends Controller
             'latitude'          => 'required|numeric',
             'longitude'         => 'required|numeric',
             'status_sertipikat' => 'required',
+            'kategori'          => 'required|string|in:Wakaf,Aset Pemerintah',
             'status_tindak_lanjut' => 'required|string|in:Belum Ditindaklanjuti,Pengumpulan Berkas,Pengukuran,Proses Sertipikasi,Selesai',
             'jenis_hak'         => 'nullable|string',
             'nomor_hak'         => 'nullable|string',
@@ -99,6 +104,7 @@ class WakafController extends Controller
             'latitude',
             'longitude',
             'status_sertipikat',
+            'kategori',
             'status_tindak_lanjut',
             'jenis_hak',
             'nomor_hak',
@@ -125,6 +131,7 @@ class WakafController extends Controller
             'latitude'          => 'required|numeric',
             'longitude'         => 'required|numeric',
             'status_sertipikat' => 'required',
+            'kategori'          => 'required|string|in:Wakaf,Aset Pemerintah',
             'status_tindak_lanjut' => 'required|string|in:Belum Ditindaklanjuti,Pengumpulan Berkas,Pengukuran,Proses Sertipikasi,Selesai',
             'jenis_hak'         => 'nullable|string',
             'nomor_hak'         => 'nullable|string',
@@ -139,6 +146,7 @@ class WakafController extends Controller
             'latitude',
             'longitude',
             'status_sertipikat',
+            'kategori',
             'status_tindak_lanjut',
             'jenis_hak',
             'nomor_hak',
@@ -207,7 +215,8 @@ class WakafController extends Controller
 
             fputcsv($output, [
                 'No',
-                'Nama Masjid / Tanah Wakaf',
+                'Kategori',
+                'Nama Masjid / Tanah',
                 'Kecamatan',
                 'Kelurahan',
                 'Latitude',
@@ -223,6 +232,7 @@ class WakafController extends Controller
             foreach ($asets as $aset) {
                 fputcsv($output, [
                     $no++,
+                    $aset->kategori ?? 'Wakaf',
                     $aset->nama_masjid,
                     $aset->kecamatan,
                     $aset->kelurahan,

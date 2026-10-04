@@ -26,6 +26,14 @@
                     <input type="text" name="nama_masjid" class="form-control" placeholder="Contoh: Masjid Agung Parepare" required>
                 </div>
 
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Kategori Aset</label>
+                    <select name="kategori" class="form-select" required>
+                        <option value="Wakaf" selected>Wakaf</option>
+                        <option value="Aset Pemerintah">Aset Pemerintah</option>
+                    </select>
+                </div>
+
                 <!-- Interactive Map Picker -->
                 <div class="mb-3">
                     <label class="form-label fw-semibold d-flex justify-content-between align-items-center">

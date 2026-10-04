@@ -18,6 +18,7 @@ class AsetWakaf extends Model
         'latitude',
         'longitude',
         'status_sertipikat',
+        'kategori',
         'status_tindak_lanjut',
         'jenis_hak',
         'nomor_hak',

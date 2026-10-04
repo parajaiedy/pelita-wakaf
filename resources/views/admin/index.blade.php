@@ -55,6 +55,8 @@
             $persenSertipikat = $totalAset ? round(($sudahSertipikat / $totalAset) * 100, 1) : 0;
             $tahapTindakLanjut = ['Belum Ditindaklanjuti', 'Pengumpulan Berkas', 'Pengukuran', 'Proses Sertipikasi', 'Selesai'];
             $jumlahTindakLanjut = collect($tahapTindakLanjut)->mapWithKeys(fn ($tahap) => [$tahap => $semuaAset->where('status_tindak_lanjut', $tahap)->count()]);
+            $jumlahWakaf = $semuaAset->where('kategori', 'Wakaf')->count();
+            $jumlahAsetPemerintah = $semuaAset->where('kategori', 'Aset Pemerintah')->count();
 
             $countWakaf = 0;
             $countMilik = 0;
@@ -135,6 +137,35 @@
                 </div>
                 <div class="progress" style="height: 10px; border-radius: 999px; background: #e2e8f0;">
                     <div class="progress-bar bg-success" role="progressbar" style="width: {{ $persenSertipikat }}%" aria-valuenow="{{ $persenSertipikat }}" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ringkasan Kategori Aset -->
+        <div class="card chart-card shadow-sm mb-4">
+            <div class="card-body p-3 p-md-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h6 class="fw-bold mb-1"><i class="fa-solid fa-tags me-2 text-primary"></i>Kategori Aset</h6>
+                        <small class="text-muted">Pisahkan data wakaf dan aset pemerintah.</small>
+                    </div>
+                    <i class="fa-solid fa-layer-group text-primary fs-4"></i>
+                </div>
+                <div class="row g-2">
+                    <div class="col-6 col-md-3">
+                        <div class="border rounded-3 p-3 h-100 text-center" style="border-left: 4px solid #16a34a !important;">
+                            <i class="fa-solid fa-hand-holding-heart text-success fs-3"></i>
+                            <div class="fw-bold fs-4 text-success">{{ $jumlahWakaf }}</div>
+                            <small class="text-muted">Wakaf</small>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="border rounded-3 p-3 h-100 text-center" style="border-left: 4px solid #0d6efd !important;">
+                            <i class="fa-solid fa-building-columns text-primary fs-3"></i>
+                            <div class="fw-bold fs-4 text-primary">{{ $jumlahAsetPemerintah }}</div>
+                            <small class="text-muted">Aset Pemerintah</small>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -289,13 +320,21 @@
                             </select>
                         </div>
                         <div class="col-6 col-lg-2">
-                            <label for="status" class="form-label small mb-1">Sertipikat</label>
-                            <select name="status" id="status" class="form-select">
-                                <option value="">Semua status</option>
-                                <option value="Sudah Bersertipikat" @selected(request('status') === 'Sudah Bersertipikat')>Sudah</option>
-                                <option value="Belum Bersertipikat" @selected(request('status') === 'Belum Bersertipikat')>Belum</option>
-                            </select>
-                        </div>
+                                                    <label for="status" class="form-label small mb-1">Sertipikat</label>
+                                                    <select name="status" id="status" class="form-select">
+                                                        <option value="">Semua status</option>
+                                                        <option value="Sudah Bersertipikat" @selected(request('status') === 'Sudah Bersertipikat')>Sudah</option>
+                                                        <option value="Belum Bersertipikat" @selected(request('status') === 'Belum Bersertipikat')>Belum</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-6 col-lg-2">
+                                                    <label for="kategori" class="form-label small mb-1">Kategori</label>
+                                                    <select name="kategori" id="kategori" class="form-select">
+                                                        <option value="">Semua kategori</option>
+                                                        <option value="Wakaf" @selected(request('kategori') === 'Wakaf')>Wakaf</option>
+                                                        <option value="Aset Pemerintah" @selected(request('kategori') === 'Aset Pemerintah')>Aset Pemerintah</option>
+                                                    </select>
+                                                </div>
                         <div class="col-6 col-lg-2">
                             <label for="jenis_hak" class="form-label small mb-1">Jenis hak</label>
                             <select name="jenis_hak" id="jenis_hak" class="form-select">
@@ -316,9 +355,9 @@
                         </div>
                         <div class="col-6 col-lg-2 d-flex gap-2">
                             <button type="submit" class="btn btn-brand flex-grow-1"><i class="fa-solid fa-filter me-1"></i> Terapkan</button>
-                            @if(request()->hasAny(['q', 'kecamatan', 'status', 'jenis_hak', 'tindak_lanjut']))
-                                <a href="{{ route('admin.index') }}" class="btn btn-outline-secondary" title="Reset filter"><i class="fa-solid fa-rotate-left"></i></a>
-                            @endif
+                            @if(request()->hasAny(['q', 'kecamatan', 'status', 'jenis_hak', 'tindak_lanjut', 'kategori']))
+                                                            <a href="{{ route('admin.index') }}" class="btn btn-outline-secondary" title="Reset filter"><i class="fa-solid fa-rotate-left"></i></a>
+                                                        @endif
                         </div>
                     </div>
                 </form>
@@ -326,7 +365,7 @@
                 <div class="d-flex align-items-center gap-2 mb-3">
                     <small class="text-muted">
                         Total <b>{{ $asetWakaf->count() }}</b> aset
-                        @if(request()->hasAny(['q', 'kecamatan', 'status', 'jenis_hak', 'tindak_lanjut'])) <span class="badge badge-soft-info ms-1">Hasil filter</span> @endif
+                        @if(request()->hasAny(['q', 'kecamatan', 'status', 'jenis_hak', 'tindak_lanjut', 'kategori'])) <span class="badge badge-soft-info ms-1">Hasil filter</span> @endif
                     </small>
                 </div>
 
@@ -340,6 +379,7 @@
                                     <th class="text-start">Wilayah</th>
                                     <th>Koordinat</th>
                                     <th>Status Sertipikat</th>
+                                                                        <th>Kategori</th>
                                                                         <th>Tindak Lanjut</th>
                                                                         <th>Jenis & No. Hak</th>
                                     <th>Luas (m²)</th>
@@ -369,10 +409,17 @@
                                                     <i class="fa-solid fa-xmark-circle me-1"></i> Belum Bersertipikat
                                                 </span>
                                             @endif
-                                        </td>
-                                        <td class="text-center text-nowrap">
-                                            @php
-                                                $warnaTindakLanjut = match($item->status_tindak_lanjut ?? 'Belum Ditindaklanjuti') {
+                                                                                    </td>
+                                                                                    <td class="text-center text-nowrap">
+                                                                                        @if(($item->kategori ?? 'Wakaf') === 'Wakaf')
+                                                                                            <span class="badge bg-success-subtle text-success border border-success px-2 py-1"><i class="fa-solid fa-hand-holding-heart me-1"></i>Wakaf</span>
+                                                                                        @else
+                                                                                            <span class="badge bg-primary-subtle text-primary border border-primary px-2 py-1"><i class="fa-solid fa-building-columns me-1"></i>Aset Pemerintah</span>
+                                                                                        @endif
+                                                                                    </td>
+                                                                                    <td class="text-center text-nowrap">
+                                                                                        @php
+                                                                                            $warnaTindakLanjut = match($item->status_tindak_lanjut ?? 'Belum Ditindaklanjuti') {
                                                     'Selesai' => 'bg-success-subtle text-success border-success',
                                                     'Proses Sertipikasi', 'Pengukuran' => 'bg-warning-subtle text-warning-emphasis border-warning',
                                                     'Pengumpulan Berkas' => 'bg-info-subtle text-info-emphasis border-info',
@@ -416,7 +463,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="9" class="text-center py-5 text-muted">
+                                        <td colspan="10" class="text-center py-5 text-muted">
                                             <i class="fa-solid fa-folder-open fa-3x mb-3 d-block opacity-50"></i>
                                             <h5 class="fw-semibold">Data Kosong</h5>
                                             <p class="mb-0">Belum ada data aset yang terdaftar.</p>
