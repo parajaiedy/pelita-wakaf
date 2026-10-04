@@ -14,22 +14,7 @@
     </style>
     @include('partials.theme')
 </head>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pelita Aset Parepare - Portal Aset Wilayah Kota Parepare</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
-    @include('partials.styles')
-    <style>
-        .hero a { text-decoration: none; }
-        #miniMap { width: 100%; height: 420px; border-radius: var(--radius-lg); border: 1px solid var(--line); box-shadow: var(--shadow-md); }
-        .mini-card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow-xs); transition: transform .2s ease, box-shadow .2s ease; }
-        .mini-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
-    </style>
-    @include('partials.theme')
-</head>
+
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-custom fixed-top py-3">
