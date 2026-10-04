@@ -14,6 +14,9 @@ Route::get('/peta', [WakafController::class, 'petaPublik'])->name('peta.publik')
 Route::get('/wakaf', [WakafController::class, 'petaWakaf'])->name('peta.wakaf');
 Route::get('/aset-pemerintah', [WakafController::class, 'petaAsetPemerintah'])->name('peta.aset-pemerintah');
 
+// Route perbandingan peta Wakaf vs Aset Pemerintah
+Route::get('/bandingkan', [WakafController::class, 'bandingkan'])->name('bandingkan');
+
 // Route Auth (Login & Logout)
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.perform');

@@ -94,6 +94,7 @@
         }
     </style>
     @yield('head')
+    @include('partials.theme')
 </head>
 <body>
 
@@ -118,12 +119,21 @@
         @yield('category_badge')
 
         <div class="search-box mb-3 position-relative">
-            <div class="input-group input-group-sm">
+            <div class="input-group input-group-sm mb-2">
                 <span class="input-group-text"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
-                <input type="text" id="cari-masjid" class="form-control" placeholder="Cari nama aset / kelurahan..." autocomplete="off">
+                <input type="text" id="cari-masjid" class="form-control" placeholder="Cari aset / kelurahan / jalan..." autocomplete="off">
+                <button class="btn btn-brand" type="button" id="btn-locate" title="Lokasi saya"><i class="fa-solid fa-crosshairs"></i></button>
             </div>
             <div id="saran-cari" class="list-group position-absolute w-100 shadow-sm d-none" style="z-index: 1200; max-height: 240px; overflow-y: auto; top: 100%;"></div>
             <div id="hasil-cari" class="small text-muted mt-1 d-none"></div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label small mb-1">Filter Layer</label>
+            <div class="d-flex flex-wrap gap-2">
+                <label class="d-flex align-items-center gap-1 small"><input type="checkbox" class="form-check-input layer-toggle" value="Wakaf" checked> <span class="badge badge-soft-wakaf">Wakaf</span></label>
+                <label class="d-flex align-items-center gap-1 small"><input type="checkbox" class="form-check-input layer-toggle" value="Aset Pemerintah" checked> <span class="badge badge-soft-aset">Aset Pemerintah</span></label>
+            </div>
         </div>
 
         <hr class="my-3">

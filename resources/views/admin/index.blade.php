@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" />
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap5.min.css" />
     <style>.btn-icon{height:38px;width:38px,display:inline-flex;align-items:center;justify-content:center;border-radius:10px;border:1px solid var(--line);background:#fff;color:var(--ink-soft);transition:all .15s}.btn-icon:hover{box-shadow:var(--shadow-sm);transform:translateY(-1px)}</style>
+    @include('partials.theme')
 </head>
 <body>
 
@@ -19,6 +20,7 @@
             <span class="navbar-brand-mark"><i class="fa-solid fa-map-location-dot"></i></span>
             <span>Pelita Aset Parepare</span>
         </a>
+            <button class="theme-toggle ms-2" type="button" onclick="toggleTema()" title="Ganti tema"><i id="themeIcon" class="fa-solid fa-moon"></i></button>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navAdmin">
             <span class="navbar-toggler-icon" style="filter:invert(1)"></span>
         </button>

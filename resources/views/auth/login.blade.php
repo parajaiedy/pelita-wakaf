@@ -12,7 +12,8 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
         @include('partials.styles')
-    </head>
+        @include('partials.theme')
+</head>
     <body class="login-shell d-flex align-items-center justify-content-center">
 
 <div class="container">

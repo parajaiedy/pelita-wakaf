@@ -91,7 +91,7 @@
         });
 
         var marker = L.marker([item.latitude, item.longitude], { icon: customIcon });
-        marker.nama = item.nama_masjid; marker.kecamatan = item.kecamatan; marker.latlngVal = [item.latitude, item.longitude];
+        marker.nama = item.nama_masjid; marker.kecamatan = item.kecamatan; marker.kelurahan = item.kelurahan; marker.kategori = item.kategori; marker.latlngVal = [item.latitude, item.longitude];
         allMarkers.push(marker); clusterGroup.addLayer(marker);
         marker.bindTooltip(item.nama_masjid, { permanent: false, direction: 'top' });
         marker.on('click', function() { bukaDetail(item); });
@@ -105,6 +105,18 @@
     var hasilCari = document.getElementById('hasil-cari');
     var saranCari = document.getElementById('saran-cari');
     var DEFAULT_VIEW = [-4.00165, 119.64347], DEFAULT_ZOOM = 13;
+
+    var kategoriFilter = { 'Wakaf': true, 'Aset Pemerintah': true };
+    function applyCategoryFilter() {
+        clusterGroup.clearLayers();
+        allMarkers.forEach(function(m) { if (kategoriFilter[m.kategori]) clusterGroup.addLayer(m); });
+    }
+    document.querySelectorAll('.layer-toggle').forEach(function(cb){
+        cb.addEventListener('change', function() {
+            kategoriFilter[this.value] = this.checked;
+            applyCategoryFilter();
+        });
+    });
 
     function renderSuggestions(q) {
         saranCari.innerHTML = '';
@@ -128,8 +140,9 @@
         clusterGroup.clearLayers();
         var cocok = [];
         allMarkers.forEach(function(m) {
-            var nama = (m.nama || '').toLowerCase(), kec = (m.kecamatan || '').toLowerCase();
-            if (!q || nama.indexOf(q) !== -1 || kec.indexOf(q) !== -1) { clusterGroup.addLayer(m); if (q) cocok.push(L.latLng(m.latlngVal[0], m.latlngVal[1])); }
+            var nama = (m.nama || '').toLowerCase(), kec = (m.kecamatan || '').toLowerCase(), kel = (m.kelurahan || '').toLowerCase();
+            var show = kategoriFilter[m.kategori] && (!q || nama.indexOf(q) !== -1 || kec.indexOf(q) !== -1 || kel.indexOf(q) !== -1);
+            if (show) { clusterGroup.addLayer(m); if (q) cocok.push(L.latLng(m.latlngVal[0], m.latlngVal[1])); }
         });
         if (q && cocok.length) { map.fitBounds(L.latLngBounds(cocok).pad(0.25)); hasilCari.classList.remove('d-none'); hasilCari.innerHTML = '<i class="fa-solid fa-circle-check text-success me-1"></i>' + cocok.length + ' aset ditemukan'; }
         else if (q) { hasilCari.classList.remove('d-none'); hasilCari.innerHTML = '<i class="fa-solid fa-circle-exclamation text-danger me-1"></i>Tidak ada aset yang cocok'; map.setView(DEFAULT_VIEW, DEFAULT_ZOOM); }
@@ -141,6 +154,35 @@
         renderSuggestions(q);
         filterMarkers(q);
     });
+    inputCari.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            var q = inputCari.value.trim();
+            if (!q) return;
+            // Fallback geocoding ke Nominatim
+            fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(q + ', Parepare, Sulawesi Selatan, Indonesia')).then(r=>r.json()).then(function(res){
+                if (res && res.length) {
+                    var lat = parseFloat(res[0].lat), lon = parseFloat(res[0].lon);
+                    map.setView([lat, lon], 16);
+                    if (window.geoMarker) map.removeLayer(window.geoMarker);
+                    window.geoMarker = L.circleMarker([lat, lon], { radius: 8, color: '#3b82f6', fillColor: '#3b82f6', fillOpacity: .6 }).addTo(map).bindPopup('Hasil pencarian: ' + q).openPopup();
+                    hasilCari.classList.remove('d-none'); hasilCari.innerHTML = '<i class="fa-solid fa-circle-check text-success me-1"></i> Lokasi ditemukan';
+                }
+            }).catch(function(){});
+        }
+    });
     inputCari.addEventListener('focus', function() { if (this.value.trim()) renderSuggestions(this.value.trim().toLowerCase()); });
     document.addEventListener('click', function(e) { if (!inputCari.contains(e.target) && !saranCari.contains(e.target)) saranCari.classList.add('d-none'); });
+
+    // Locate me
+    document.getElementById('btn-locate').addEventListener('click', function() {
+        if (!navigator.geolocation) { alert('Browser tidak mendukung geolokasi'); return; }
+        navigator.geolocation.getCurrentPosition(function(pos){
+            var lat = pos.coords.latitude, lng = pos.coords.longitude;
+            map.setView([lat, lng], 15);
+            L.circleMarker([lat, lng], { radius: 8, color: '#10b981', fillColor: '#10b981', fillOpacity: .6 }).addTo(map).bindPopup('Lokasi Anda').openPopup();
+        }, function(){
+            alert('Tidak dapat mengakses lokasi.');
+        });
+    });
 </script>

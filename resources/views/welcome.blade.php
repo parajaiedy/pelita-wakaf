@@ -14,6 +14,7 @@
         .mini-card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow-xs); transition: transform .2s ease, box-shadow .2s ease; }
         .mini-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
     </style>
+    @include('partials.theme')
 </head>
 <body>
 
@@ -23,6 +24,7 @@
             <span class="navbar-brand-mark"><i class="fa-solid fa-map-location-dot"></i></span>
             <span>Pelita Aset Parepare</span>
         </a>
+            <button class="theme-toggle ms-2" type="button" onclick="toggleTema()" title="Ganti tema"><i id="themeIcon" class="fa-solid fa-moon"></i></button>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navPublic">
             <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
         </button>

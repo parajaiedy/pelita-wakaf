@@ -220,4 +220,74 @@
         .card-stat .stat-icon { width: 40px; height: 40px; font-size: 1rem; }
         .kpi-card .kpi-value { font-size: 1.4rem; }
     }
+    /* ============================================================
+       DARK MODE — diaktifkan lewat <html data-theme="dark">
+       ============================================================ */
+    [data-theme="dark"] {
+        --brand-50:  #052e26;
+        --brand-100: #064e3b;
+        --brand-200: #065f46;
+        --ink:        #e8eef7;
+        --ink-soft:   #cbd5e1;
+        --muted:      #94a3b8;
+        --line:       #253248;
+        --surface:    #131c2e;
+        --surface-2:  #1a2438;
+        --bg:         #0a1120;
+        --shadow-xs: 0 1px 2px rgba(0,0,0,.4);
+        --shadow-sm: 0 1px 3px rgba(0,0,0,.45), 0 1px 2px rgba(0,0,0,.4);
+        --shadow-md: 0 12px 32px -8px rgba(0,0,0,.6);
+        --shadow-lg: 0 24px 60px -16px rgba(0,0,0,.7);
+        --ring: 0 0 0 4px rgba(16,185,129,.28);
+    }
+    [data-theme="dark"] body { background: var(--bg); color: var(--ink); }
+    [data-theme="dark"] .card,
+    [data-theme="dark"] .chart-card,
+    [data-theme="dark"] .kpi-card,
+    [data-theme="dark"] .feature-tile,
+    [data-theme="dark"] .portal-card,
+    [data-theme="dark"] .mini-card,
+    [data-theme="dark"] .login-card { background: var(--surface); border-color: var(--line); }
+    [data-theme="dark"] .navbar-custom { background: rgba(8,14,26,.86); }
+    [data-theme="dark"] .sidebar-panel { background: rgba(19,28,46,.94); border-color: rgba(255,255,255,.08); }
+    [data-theme="dark"] .stat-card { background: var(--surface-2); }
+    [data-theme="dark"] .stat-card .stat-icon-wrap { background: var(--surface); }
+    [data-theme="dark"] .filter-panel { background: var(--surface-2); border-color: var(--line); }
+    [data-theme="dark"] .segmented { background: var(--surface-2); border-color: var(--line); }
+    [data-theme="dark"] .segmented a.active, [data-theme="dark"] .segmented button.active { background: var(--surface); }
+    [data-theme="dark"] .table-modern thead th { background: #0a1120; }
+    [data-theme="dark"] .table-modern tbody td { border-color: var(--line); color: var(--ink); }
+    [data-theme="dark"] .table-modern tbody tr:hover { background: rgba(16,185,129,.08); }
+    [data-theme="dark"] .form-control, [data-theme="dark"] .form-select { background: var(--surface-2); border-color: var(--line); color: var(--ink); }
+    [data-theme="dark"] .input-group-text { background: var(--surface-2); border-color: var(--line); color: var(--muted); }
+    [data-theme="dark"] .detail-panel { background: var(--surface); border-color: var(--line); }
+    [data-theme="dark"] .detail-body { background: var(--surface); }
+    [data-theme="dark"] .detail-row .dr-icon { background: var(--surface-2); color: var(--brand-400); }
+    [data-theme="dark"] .detail-row { border-color: var(--line); }
+    [data-theme="dark"] .bottom-nav { background: rgba(19,28,46,.96); border-color: var(--line); }
+    [data-theme="dark"] .bottom-nav .bn-item.active { background: rgba(16,185,129,.14); color: var(--brand-400); }
+    [data-theme="dark"] .bg-white { background: var(--surface) !important; }
+    [data-theme="dark"] .text-dark { color: var(--ink) !important; }
+    [data-theme="dark"] .border { border-color: var(--line) !important; }
+    [data-theme="dark"] .badge.bg-light { background: var(--surface-2) !important; color: var(--ink) !important; }
+    [data-theme="dark"] .peta-loading { background: rgba(10,17,32,.94); }
+    [data-theme="dark"] .peta-loading .fw-bold { color: var(--ink) !important; }
+    [data-theme="dark"] .leaflet-popup-content-wrapper,
+    [data-theme="dark"] .leaflet-popup-tip { background: var(--surface); color: var(--ink); }
+    [data-theme="dark"] .leaflet-bar a { background: var(--surface); color: var(--ink); border-color: var(--line); }
+    [data-theme="dark"] .leaflet-control-layers { background: var(--surface); color: var(--ink); }
+    [data-theme="dark"] .list-group-item { background: var(--surface); color: var(--ink); border-color: var(--line); }
+    [data-theme="dark"] .list-group-item-action:hover { background: var(--surface-2); }
+    [data-theme="dark"] .site-footer { background: #05090f; }
+
+    /* Tombol ganti tema */
+    .theme-toggle {
+        width: 38px; height: 38px; border-radius: 11px; border: 1px solid rgba(255,255,255,.18);
+        background: rgba(255,255,255,.08); color: #fff; font-size: .95rem;
+        display: inline-flex; align-items: center; justify-content: center;
+        transition: all .18s ease; flex-shrink: 0;
+    }
+    .theme-toggle:hover { background: rgba(255,255,255,.18); transform: translateY(-1px); }
+    [data-theme="dark"] .theme-toggle { border-color: var(--line); background: var(--surface-2); color: var(--gold-400); }
+
 </style>

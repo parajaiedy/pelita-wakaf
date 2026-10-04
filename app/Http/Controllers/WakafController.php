@@ -26,11 +26,17 @@ class WakafController extends Controller
         return view('peta_wakaf', compact('asets'));
     }
 
-    // Peta hanya untuk Aset Pemerintah
     public function petaAsetPemerintah()
     {
         $asets = AsetWakaf::where('kategori', 'Aset Pemerintah')->get();
         return view('peta_aset_pemerintah', compact('asets'));
+    }
+
+    public function bandingkan()
+    {
+        $wakaf = AsetWakaf::where('kategori', 'Wakaf')->get(['nama_masjid','latitude','longitude']);
+        $asetPemerintah = AsetWakaf::where('kategori', 'Aset Pemerintah')->get(['nama_masjid','latitude','longitude']);
+        return view('bandingkan', compact('wakaf', 'asetPemerintah'));
     }
 
     // Peta Publik Full Screen — tetap menampilkan semua aset
