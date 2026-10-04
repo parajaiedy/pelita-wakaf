@@ -175,5 +175,26 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Mobile Bottom Navigation -->
+<nav class="bottom-nav d-lg-none">
+    <a href="{{ route('home') }}" class="bn-item {{ request()->routeIs('home') ? 'active' : '' }}">
+        <i class="fa-solid fa-house"></i>
+        <span>Beranda</span>
+    </a>
+    <a href="{{ route('peta.wakaf') }}" class="bn-item {{ request()->routeIs('peta.wakaf') ? 'active' : '' }}">
+        <i class="fa-solid fa-hand-holding-heart"></i>
+        <span>Wakaf</span>
+    </a>
+    <a href="{{ route('peta.aset-pemerintah') }}" class="bn-item {{ request()->routeIs('peta.aset-pemerintah') ? 'active' : '' }}">
+        <i class="fa-solid fa-building-columns"></i>
+        <span>Pemerintah</span>
+    </a>
+    <a href="{{ route('peta.publik') }}" class="bn-item {{ request()->routeIs('peta.publik') ? 'active' : '' }}">
+        <i class="fa-solid fa-map"></i>
+        <span>Peta</span>
+    </a>
+</nav>
+
 </body>
 </html>

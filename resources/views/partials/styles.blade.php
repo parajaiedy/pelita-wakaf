@@ -194,10 +194,26 @@
     .site-footer a { color: rgba(255,255,255,.72); }
     .site-footer a:hover { color: #fff; }
 
+    .bottom-nav {
+        display: none; position: fixed; bottom: 0; left: 0; right: 0;
+        background: rgba(255,255,255,.96); backdrop-filter: blur(18px) saturate(180%);
+        -webkit-backdrop-filter: blur(18px) saturate(180%);
+        border-top: 1px solid var(--line); padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
+        box-shadow: 0 -8px 24px rgba(11,18,32,.14); z-index: 2000;
+    }
+    .bottom-nav .bn-item {
+        flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+        gap: 3px; color: var(--muted); font-size: .68rem; font-weight: 700;
+        text-decoration: none; padding: 5px 2px; border-radius: 12px; transition: all .15s ease;
+    }
+    .bottom-nav .bn-item.active { color: var(--brand-700); background: var(--brand-50); }
+    .bottom-nav .bn-item i { font-size: 1.25rem; }
+
     @media (max-width: 900px) {
-        .sidebar-panel { top: auto; bottom: 14px; left: 14px; right: 14px; width: auto; max-height: 46vh; overflow-y: auto; padding: 16px; }
+        .sidebar-panel { top: auto; bottom: 78px; left: 14px; right: 14px; width: auto; max-height: 42vh; overflow-y: auto; padding: 16px; }
         .card-stat .stat-value { font-size: 1.45rem; }
         .hero { padding: 3rem 0 3.4rem; }
+        .bottom-nav { display: flex; }
     }
     @media (max-width: 576px) {
         .card-stat .stat-value { font-size: 1.28rem; }
