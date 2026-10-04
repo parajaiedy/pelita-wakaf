@@ -1,4 +1,4 @@
-FROM php:8.3-apache
+FROM php:8.3-cli
 
 RUN apt-get update && apt-get install -y \
     libpng-dev \
@@ -12,8 +12,6 @@ RUN apt-get update && apt-get install -y \
 
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
-RUN a2enmod rewrite
-
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
@@ -24,10 +22,6 @@ RUN composer install --no-dev --optimize-autoloader
 
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# ports.conf hanya berisi Listen; vhost hanya berisi VirtualHost (hindari duplikat Listen)
-COPY config/apache-ports.conf /etc/apache2/ports.conf
-COPY config/apache-vhost.conf /etc/apache2/sites-available/000-default.conf
-
 EXPOSE 80
 
-CMD sh -c "cd /var/www/html && php artisan migrate --force || true && exec apache2-foreground"
+CMD sh -c "cd /var/www/html && php artisan migrate --force || true && php -S 0.0.0.0:80 -t public"
