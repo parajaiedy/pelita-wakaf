@@ -7,8 +7,12 @@ use App\Http\Controllers\AuthController;
 // Route Peta Utama (Bawaan)
 Route::get('/', [WakafController::class, 'index'])->name('home');
 
-// Route Peta Publik Full Screen (Ini rute barunya)
+// Route Peta Publik Full Screen (semua aset)
 Route::get('/peta', [WakafController::class, 'petaPublik'])->name('peta.publik');
+
+// Route Peta per Kategori: Wakaf & Aset Pemerintah — terpisah agar tidak tercampur
+Route::get('/wakaf', [WakafController::class, 'petaWakaf'])->name('peta.wakaf');
+Route::get('/aset-pemerintah', [WakafController::class, 'petaAsetPemerintah'])->name('peta.aset-pemerintah');
 
 // Route Auth (Login & Logout)
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');

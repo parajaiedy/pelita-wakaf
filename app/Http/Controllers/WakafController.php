@@ -10,14 +10,31 @@ class WakafController extends Controller
     // Halaman Beranda / Welcome
     public function index()
     {
-        $asetWakaf = AsetWakaf::all();
-        return view('welcome', compact('asetWakaf'));
+        $totalWakaf = AsetWakaf::where('kategori', 'Wakaf')->count();
+        $totalAset  = AsetWakaf::where('kategori', 'Aset Pemerintah')->count();
+        $total      = $totalWakaf + $totalAset;
+        $tersertifikat = AsetWakaf::where('status_sertipikat', 'Sudah Bersertipikat')->count();
+
+        return view('welcome', compact('totalWakaf', 'totalAset', 'total', 'tersertifikat'));
     }
 
-    // Halaman Peta Publik Full Screen (Ini fungsi baru kita, Pak!)
+    // Peta hanya untuk aset Wakaf
+    public function petaWakaf()
+    {
+        $asets = AsetWakaf::where('kategori', 'Wakaf')->get();
+        return view('peta_wakaf', compact('asets'));
+    }
+
+    // Peta hanya untuk Aset Pemerintah
+    public function petaAsetPemerintah()
+    {
+        $asets = AsetWakaf::where('kategori', 'Aset Pemerintah')->get();
+        return view('peta_aset_pemerintah', compact('asets'));
+    }
+
+    // Peta Publik Full Screen — tetap menampilkan semua aset
     public function petaPublik()
     {
-        // Mengambil semua data dari model yang dijamin benar
         $asets = AsetWakaf::all();
         return view('peta_publik', compact('asets'));
     }
