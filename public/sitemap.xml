@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>{base}/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>{base}/peta</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>{base}/wakaf</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>{base}/aset-pemerintah</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>{base}/bandingkan</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+</urlset>

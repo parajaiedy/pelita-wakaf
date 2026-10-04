@@ -1,19 +1,13 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <!-- Meta viewport ini SANGAT PENTING agar tampilan bagus di HP -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Pelita Aset Parepare</title>
-    
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- FontAwesome Icons -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-        @include('partials.styles')
-        @include('partials.theme')
+    @include('partials.seo_meta', ['siteTitle' => 'Login Admin - Pelita Aset Parepare', 'siteDesc' => 'Halaman login administrator Portal Pelita Aset Parepare.'])
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    @include('partials.styles')
+    @include('partials.theme')
 </head>
+
     <body class="login-shell d-flex align-items-center justify-content-center">
 
 <div class="container">
