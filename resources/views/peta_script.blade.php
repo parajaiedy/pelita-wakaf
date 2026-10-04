@@ -1,4 +1,32 @@
 <script>
+    function tutupDetail() {
+        var d = document.getElementById('detailPanel');
+        d.classList.remove('show'); d.setAttribute('aria-hidden','true');
+    }
+    function bukaDetail(item) {
+        var d = document.getElementById('detailPanel');
+        var h = document.getElementById('detailHero');
+        document.getElementById('detailNama').textContent = item.nama_masjid || '—';
+        document.getElementById('detailWilayah').textContent = 'Kec. ' + (item.kecamatan || '-') + ' / Kel. ' + (item.kelurahan || '-');
+        document.getElementById('detailHak').textContent = (item.jenis_hak || '-') + (item.nomor_hak ? ' No. ' + item.nomor_hak : '');
+        document.getElementById('detailLuas').textContent = (item.luas_tanah ? parseInt(item.luas_tanah).toLocaleString('id-ID') : '0') + ' m²';
+        document.getElementById('detailStatus').innerHTML = item.status_sertipikat === "Sudah Bersertipikat"
+            ? '<span class="badge bg-success">Sudah Bersertipikat</span>'
+            : '<span class="badge bg-danger">Belum Bersertipikat</span>';
+        document.getElementById('detailTindakLanjut').textContent = item.status_tindak_lanjut || 'Belum Ditindaklanjuti';
+        document.getElementById('detailKoordinat').textContent = (item.latitude || '0') + ', ' + (item.longitude || '0');
+        document.getElementById('detailRute').href = 'https://www.google.com/maps/dir/?api=1&destination=' + (item.latitude || 0) + ',' + (item.longitude || 0);
+        var badge = document.getElementById('detailKategoriBadge');
+        if (item.kategori === 'Aset Pemerintah') {
+            badge.textContent = 'Aset Pemerintah'; badge.className = 'badge bg-light text-primary';
+            h.className = 'detail-hero aset';
+        } else {
+            badge.textContent = 'Aset Wakaf'; badge.className = 'badge bg-light text-success';
+            h.className = 'detail-hero wakaf';
+        }
+        d.classList.add('show'); d.setAttribute('aria-hidden','false');
+    }
+
     var map = L.map('map', { zoomControl: false }).setView([-4.00165, 119.64347], 13);
     L.control.zoom({ position: 'topright' }).addTo(map);
 
@@ -19,13 +47,17 @@
         onEachFeature: function(feature, layer) { layer.bindTooltip(feature.properties.NAMOBJ || 'Kelurahan', { sticky: true, direction: 'top' }); }
     });
 
-    fetch(@json(asset('batas-kelurahan-parepare.geojson'))).then(r => r.json()).then(data => batasKelurahanLayer.addData(data)).catch(() => {});
-    fetch(@json(asset('batas-kecamatan-parepare.geojson'))).then(r => r.json()).then(data => {
-        L.geoJSON(data, {
-            style: function(feature) { var w = warnaKecamatan[feature.properties.NAMOBJ] || '#0d9488'; return { color: w, weight: 2, opacity: 0.9, fillColor: w, fillOpacity: 0.18 }; },
-            onEachFeature: function(feature, layer) { layer.bindTooltip('Kec. ' + (feature.properties.NAMOBJ || 'Kecamatan'), { permanent: true, direction: 'center', className: 'kec-label' }); }
-        }).addTo(batasWilayahLayer);
-    }).catch(() => {});
+    Promise.all([
+        fetch(@json(asset('batas-kelurahan-parepare.geojson'))).then(r => r.json()).then(data => batasKelurahanLayer.addData(data)).catch(() => {}),
+        fetch(@json(asset('batas-kecamatan-parepare.geojson'))).then(r => r.json()).then(data => {
+            L.geoJSON(data, {
+                style: function(feature) { var w = warnaKecamatan[feature.properties.NAMOBJ] || '#0d9488'; return { color: w, weight: 2, opacity: 0.9, fillColor: w, fillOpacity: 0.18 }; },
+                onEachFeature: function(feature, layer) { layer.bindTooltip('Kec. ' + (feature.properties.NAMOBJ || 'Kecamatan'), { permanent: true, direction: 'center', className: 'kec-label' }); }
+            }).addTo(batasWilayahLayer);
+        }).catch(() => {})
+    ]).then(function(){
+        document.getElementById('petaLoading').classList.add('hide');
+    });
 
     var overlayMaps = { "🗺️ Batas Kecamatan": batasWilayahLayer, "🏘️ Batas Kelurahan": batasKelurahanLayer };
     L.control.layers(baseMaps, overlayMaps, { position: 'topright' }).addTo(map);
@@ -58,23 +90,11 @@
             iconSize: [30, 36], iconAnchor: [15, 36], popupAnchor: [0, -36]
         });
 
-        var statusBadge = (item.status_sertipikat === "Sudah Bersertipikat")
-            ? '<span class="badge bg-success"><i class="fa-solid fa-check me-1"></i>Sudah Bersertipikat</span>'
-            : '<span class="badge bg-danger"><i class="fa-solid fa-xmark me-1"></i>Belum Bersertipikat</span>';
-        var googleMapsUrl = 'https://www.google.com/maps/dir/?api=1&destination=' + item.latitude + ',' + item.longitude;
-
         var marker = L.marker([item.latitude, item.longitude], { icon: customIcon });
         marker.nama = item.nama_masjid; marker.kecamatan = item.kecamatan; marker.latlngVal = [item.latitude, item.longitude];
         allMarkers.push(marker); clusterGroup.addLayer(marker);
         marker.bindTooltip(item.nama_masjid, { permanent: false, direction: 'top' });
-        marker.bindPopup(
-            '<div class="popup-title">' + item.nama_masjid + '</div>' +
-            '<div class="popup-info"><i class="fa-solid fa-map-pin me-1 text-secondary"></i><b>Kec. ' + item.kecamatan + '</b> / Kel. ' + item.kelurahan + '</div>' +
-            '<div class="popup-info"><i class="fa-solid fa-file-contract me-1 text-secondary"></i>' + (item.jenis_hak || '-') + ' No. ' + (item.nomor_hak || '-') + '</div>' +
-            '<div class="popup-info"><i class="fa-solid fa-ruler-combined me-1 text-secondary"></i>Luas: <b>' + item.luas_tanah + ' m²</b></div>' +
-            '<div class="my-2">' + statusBadge + '</div>' +
-            '<a href="' + googleMapsUrl + '" target="_blank" class="btn btn-primary btn-route text-white w-100 mt-1"><i class="fa-solid fa-diamond-turn-right me-1"></i> Rute Google Maps</a>'
-        );
+        marker.on('click', function() { bukaDetail(item); });
     });
 
     document.getElementById("total-aset").innerText = total;
@@ -83,9 +103,28 @@
 
     var inputCari = document.getElementById('cari-masjid');
     var hasilCari = document.getElementById('hasil-cari');
+    var saranCari = document.getElementById('saran-cari');
     var DEFAULT_VIEW = [-4.00165, 119.64347], DEFAULT_ZOOM = 13;
-    inputCari.addEventListener('input', function() {
-        var q = this.value.trim().toLowerCase();
+
+    function renderSuggestions(q) {
+        saranCari.innerHTML = '';
+        if (!q) { saranCari.classList.add('d-none'); return; }
+        var cocok = dataMasjid.filter(function(item) {
+            return (item.nama_masjid || '').toLowerCase().indexOf(q) !== -1 || (item.kelurahan || '').toLowerCase().indexOf(q) !== -1 || (item.kecamatan || '').toLowerCase().indexOf(q) !== -1;
+        }).slice(0, 8);
+        if (!cocok.length) { saranCari.classList.add('d-none'); return; }
+        cocok.forEach(function(item) {
+            var el = document.createElement('button');
+            el.type = 'button';
+            el.className = 'list-group-item list-group-item-action py-2 px-3 small text-start';
+            el.innerHTML = '<div class="fw-semibold">' + (item.nama_masjid || '') + '</div><div class="text-muted" style="font-size:.75rem">' + (item.kelurahan || '') + ', ' + (item.kecamatan || '') + '</div>';
+            el.onclick = function() { inputCari.value = item.nama_masjid; saranCari.classList.add('d-none'); filterMarkers(item.nama_masjid.toLowerCase()); };
+            saranCari.appendChild(el);
+        });
+        saranCari.classList.remove('d-none');
+    }
+
+    function filterMarkers(q) {
         clusterGroup.clearLayers();
         var cocok = [];
         allMarkers.forEach(function(m) {
@@ -95,5 +134,13 @@
         if (q && cocok.length) { map.fitBounds(L.latLngBounds(cocok).pad(0.25)); hasilCari.classList.remove('d-none'); hasilCari.innerHTML = '<i class="fa-solid fa-circle-check text-success me-1"></i>' + cocok.length + ' aset ditemukan'; }
         else if (q) { hasilCari.classList.remove('d-none'); hasilCari.innerHTML = '<i class="fa-solid fa-circle-exclamation text-danger me-1"></i>Tidak ada aset yang cocok'; map.setView(DEFAULT_VIEW, DEFAULT_ZOOM); }
         else { hasilCari.classList.add('d-none'); map.setView(DEFAULT_VIEW, DEFAULT_ZOOM); }
+    }
+
+    inputCari.addEventListener('input', function() {
+        var q = this.value.trim().toLowerCase();
+        renderSuggestions(q);
+        filterMarkers(q);
     });
+    inputCari.addEventListener('focus', function() { if (this.value.trim()) renderSuggestions(this.value.trim().toLowerCase()); });
+    document.addEventListener('click', function(e) { if (!inputCari.contains(e.target) && !saranCari.contains(e.target)) saranCari.classList.add('d-none'); });
 </script>

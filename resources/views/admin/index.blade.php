@@ -7,7 +7,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     @include('partials.styles')
-    <style>.btn-icon{height:38px;width:38px;display:inline-flex;align-items:center;justify-content:center;border-radius:10px;border:1px solid var(--line);background:#fff;color:var(--ink-soft);transition:all .15s}.btn-icon:hover{box-shadow:var(--shadow-sm);transform:translateY(-1px)}</style>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap5.min.css" />
+    <style>.btn-icon{height:38px;width:38px,display:inline-flex;align-items:center;justify-content:center;border-radius:10px;border:1px solid var(--line);background:#fff;color:var(--ink-soft);transition:all .15s}.btn-icon:hover{box-shadow:var(--shadow-sm);transform:translateY(-1px)}</style>
 </head>
 <body>
 
@@ -180,7 +182,7 @@
 
                 <div class="border rounded">
                     <div class="table-responsive">
-                        <table class="table table-modern align-middle mb-0">
+                        <table id="tabelAset" class="table table-modern align-middle mb-0">
                             <thead>
                                 <tr class="text-center text-nowrap">
                                     <th width="4%">No</th>
@@ -278,5 +280,33 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#tabelAset').DataTable({
+                language: {
+                    url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/id.json'
+                },
+                pageLength: 25,
+                lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, 'Semua']],
+                ordering: true,
+                dom: 'Bfrtip',
+                buttons: [
+                    { extend: 'excel', text: '<i class="fa-solid fa-file-excel me-1"></i> Excel', className: 'btn btn-soft btn-sm' },
+                    { extend: 'pdf', text: '<i class="fa-solid fa-file-pdf me-1"></i> PDF', className: 'btn btn-outline-brand btn-sm' },
+                    { extend: 'print', text: '<i class="fa-solid fa-print me-1"></i> Print', className: 'btn btn-outline-secondary btn-sm' }
+                ]
+            });
+        });
+    </script>
+
 </body>
 </html>

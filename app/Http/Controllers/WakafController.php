@@ -14,8 +14,9 @@ class WakafController extends Controller
         $totalAset  = AsetWakaf::where('kategori', 'Aset Pemerintah')->count();
         $total      = $totalWakaf + $totalAset;
         $tersertifikat = AsetWakaf::where('status_sertipikat', 'Sudah Bersertipikat')->count();
+        $asets = AsetWakaf::select('nama_masjid','kecamatan','kelurahan','latitude','longitude','status_sertipikat','kategori','status_tindak_lanjut','jenis_hak','nomor_hak','luas_tanah')->get();
 
-        return view('welcome', compact('totalWakaf', 'totalAset', 'total', 'tersertifikat'));
+        return view('welcome', compact('totalWakaf', 'totalAset', 'total', 'tersertifikat', 'asets'));
     }
 
     // Peta hanya untuk aset Wakaf
