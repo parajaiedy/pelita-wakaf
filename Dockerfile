@@ -7,7 +7,8 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     git \
-    curl
+    curl \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
@@ -27,6 +28,9 @@ ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/000-default.conf
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf
 
+COPY config/apache-render.conf /etc/apache2/sites-available/000-default.conf
+COPY config/apache-render.conf /etc/apache2/ports.conf
+
 EXPOSE 80
 
-CMD sh -c "php artisan migrate --force && exec apache2-foreground"
+CMD sh -c "cd /var/www/html && php artisan migrate --force || true && exec apache2-foreground"
