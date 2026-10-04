@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: pelita-wakaf-parepare
+    runtime: docker
+    plan: free
+    branch: main
+    healthCheckPath: /
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_URL
+        value: https://pelita-wakaf-parepare.onrender.com
